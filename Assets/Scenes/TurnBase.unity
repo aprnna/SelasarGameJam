@@ -856,8 +856,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 979678485
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1707,7 +1707,7 @@ Tilemap:
       m_TileIndex: 0
       m_TileSpriteIndex: 0
       m_TileMatrixIndex: 0
-      m_TileColorIndex: 1
+      m_TileColorIndex: 3
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1
@@ -1717,7 +1717,7 @@ Tilemap:
       m_TileIndex: 0
       m_TileSpriteIndex: 0
       m_TileMatrixIndex: 0
-      m_TileColorIndex: 1
+      m_TileColorIndex: 3
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1
@@ -1727,7 +1727,7 @@ Tilemap:
       m_TileIndex: 0
       m_TileSpriteIndex: 0
       m_TileMatrixIndex: 0
-      m_TileColorIndex: 1
+      m_TileColorIndex: 3
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1
@@ -1737,7 +1737,7 @@ Tilemap:
       m_TileIndex: 0
       m_TileSpriteIndex: 0
       m_TileMatrixIndex: 0
-      m_TileColorIndex: 1
+      m_TileColorIndex: 3
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1
@@ -1780,12 +1780,12 @@ Tilemap:
   m_TileColorArray:
   - m_RefCount: 0
     m_Data: {r: 6.3588e-41, g: 6.3588e-41, b: 6.3588e-41, a: 6.3588e-41}
+  - m_RefCount: 0
+    m_Data: {r: 6.3661e-41, g: 6.3661e-41, b: 6.3661e-41, a: 6.3661e-41}
+  - m_RefCount: 0
+    m_Data: {r: 6.3661e-41, g: 6.3661e-41, b: 6.3661e-41, a: 6.3661e-41}
   - m_RefCount: 4
-    m_Data: {r: 0.008384705, g: 1, b: 0, a: 0.05490196}
-  - m_RefCount: 0
-    m_Data: {r: -1.4336006e-28, g: -1.4336006e-28, b: -1.4336006e-28, a: -1.4336006e-28}
-  - m_RefCount: 0
-    m_Data: {r: -6.481717e-29, g: -6.481717e-29, b: -6.481717e-29, a: -6.481717e-29}
+    m_Data: {r: 0.008384705, g: 1, b: 0, a: 0.02745098}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -5323,7 +5323,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 48.605312, y: -12.171001}
+  m_AnchoredPosition: {x: -0.0000038146973, y: 0}
   m_SizeDelta: {x: 197.211, y: 124.342}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1449730625
@@ -5346,7 +5346,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 7482667652216324306, guid: 842dcb2ffcdf41943b75d7819e21afea, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

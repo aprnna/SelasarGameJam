@@ -7,6 +7,7 @@ using Player;
 using TilemapLayer;
 using Turnbase_System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 public class TurnBaseSystem : MonoBehaviour
@@ -35,6 +36,8 @@ public class TurnBaseSystem : MonoBehaviour
     private CancellationToken _cancellationToken;
     private Vector2 _mousePos;
     private Camera _mainCamera;
+    private Vector3 _pendingMove;
+    private bool _confirmMove;
     private void Awake()
     {
         _players        = new List<UnitData>();
@@ -106,17 +109,22 @@ public class TurnBaseSystem : MonoBehaviour
     {
         _battleArea.ShowMoveTile(unitModel);
     }
+
+    public void HidePlayerMove()
+    {
+        _battleArea.HideMoveTile();
+    }
     public  void ShowPreview(Vector3 position)
         => _previewTilemap.ShowPreview(
             _activeUnit,
             position,
-            true
+            IsValid(position)
         );
     public void ClearPreview() 
         => _previewTilemap.ClearPreview();
     
     public bool IsValid(Vector3 worldPosition)
-        => _battleBoard.IsEmpty(worldPosition);
+        => _battleBoard.IsEmpty(worldPosition) && _battleArea.IsValidMoveCell(worldPosition) ;
     public void StartPreview()
     {
         _cts = new CancellationTokenSource();
@@ -132,8 +140,17 @@ public class TurnBaseSystem : MonoBehaviour
             _cts.Dispose();
             _cts = null;
         }
-        _activeUnit = null;
         ClearPreview();
+    }
+
+    public void FreezePreview()
+    {
+        if (_cts != null)
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+            _cts = null;
+        }
     }
     public async UniTaskVoid PreviewLoopAsync(CancellationToken token)
     {
@@ -141,7 +158,6 @@ public class TurnBaseSystem : MonoBehaviour
         {
             _mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
             var worldPosition = _mainCamera.ScreenToWorldPoint(_mousePos);
-            Debug.Log("PREVIEW "+ worldPosition);
             ShowPreview(worldPosition);
             await UniTask.Yield(token);
         }
@@ -150,24 +166,52 @@ public class TurnBaseSystem : MonoBehaviour
     {
         _activeUnit = unitModel;
     }
-
+    public bool IsPointerOverUI(Vector2 screenPosition)
+    {
+        var eventData = new PointerEventData(EventSystem.current) {
+            position = screenPosition
+        };
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+        return results.Count > 0;
+    }
     public void OnLeftMouseClicked()
     {
+   
         _mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
+        if (IsPointerOverUI(_mousePos)) return;
         if (BattleState.CurrentState != PlayerTurnState) return;
         var worldPosition = _mainCamera.ScreenToWorldPoint(_mousePos);
         UnitModel item = _battleBoard.GetUnit(worldPosition);
-        Debug.Log(item != null );
-        if(item != null ) UIManagerBattle.ShowUnitAction(item, item.WorldCoords);
-        if(_activeUnit != null)
+        
+        if (item != null)
         {
-            _battleBoard.Build(worldPosition, _prefabPlayer, _activeUnit.UnitData);
-            _battleArea.HideMoveTile();
-            _uIManagerBattle.HideUnitAction();
-            _battleBoard.RemoveUnit(_activeUnit);
-            StopPreview();
-            SetActiveUnit(null);
+            _uIManagerBattle.ShowUnitAction(item, item.WorldCoords);
         }
+        if(_activeUnit != null && !_confirmMove && IsValid(worldPosition))
+        {
+            _pendingMove = worldPosition;
+            FreezePreview();
+            _confirmMove = true;
+            _uIManagerBattle.ShowConfirmMove();
+        }
+    }
 
+    public void OnMovePerformed()
+    {
+        var newUnit = _battleBoard.Build(_pendingMove, _prefabPlayer, _activeUnit.UnitData);
+        _battleBoard.RemoveUnit(_activeUnit);
+        _activeUnit = newUnit;
+        HidePlayerMove();
+        StopPreview();
+        _confirmMove = false;
+        UIManagerBattle.ShowUnitAction(newUnit, _pendingMove);
+    }
+
+    public void OnMoveCanceled()
+    {
+        HidePlayerMove();
+        StopPreview();
+        _confirmMove = false;
     }
 }

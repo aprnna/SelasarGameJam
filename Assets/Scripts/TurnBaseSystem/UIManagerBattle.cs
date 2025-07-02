@@ -27,5 +27,11 @@ namespace Turnbase_System
         {
             _unitPopUpController.ShowPopUpAction(unitModel, position);
         }
+
+        public void ShowConfirmMove()
+        {
+            _unitPopUpController.ShowConfirmMovePanel();
+
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
@@ -11,18 +12,26 @@ namespace TilemapLayer
         [SerializeField] private ColliderTilemap _colliderTilemap;
         private Dictionary<Vector3Int,UnitModel> _unit = new();
 
-        public void Build(Vector3 worldCoords, GameObject prefab, UnitData unitData)
+        private void Start()
+        {
+            if (_tilemap != null)
+            {
+                _tilemap.color = new Color(1f, 1f, 1f, 0f);
+            }
+        }
+
+        public UnitModel Build(Vector3 worldCoords, GameObject prefab, UnitData unitData)
         {
             Vector3Int baseCoords = _tilemap.WorldToCell(worldCoords);
-            if(!IsEmpty(baseCoords)) return;
+            if(!IsEmpty(baseCoords)) return null;
             _colliderTilemap.SetCollider(baseCoords);
             var position = _tilemap.CellToWorld(baseCoords) + new Vector3(1 / 2f, 1 / 2f);
             var player = Instantiate( prefab, position, Quaternion.identity);
             var unit = new UnitModel(_tilemap, unitData, player ,baseCoords, position);
-            Debug.Log("BUILD "+ baseCoords);
             _unit.Add(baseCoords, unit);
             var playerController = player.transform.GetComponent<UnitController>();
             playerController.Initialize(unit);
+            return unit;
         }
         
         public List<Vector3> GetPlayerLocWorld()

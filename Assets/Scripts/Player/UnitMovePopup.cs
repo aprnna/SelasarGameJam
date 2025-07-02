@@ -21,9 +21,11 @@ namespace Player
         {
             _unitPopUpController = unitPopUpController;
             _movePopup.SetActive(true);
+            
             _turnBaseSystem = TurnBaseSystem.Instance;
             _turnBaseSystem.SetActiveUnit(unitPopUpController.CurrentItem);
             _turnBaseSystem.StartPreview();
+            
             _confirmYes.onClick.RemoveAllListeners();
             _confirmNo.onClick.RemoveAllListeners();
 
@@ -36,9 +38,17 @@ namespace Player
             _movePopup.SetActive(false);
 
         }
+
+        public void ShowConfirmPanel()
+        {
+            gameObject.SetActive(true);
+            _movePopup.SetActive(false);
+        }
         private void OnConfirmYes()
         {
             Debug.Log("Yes Move");
+            _turnBaseSystem.OnMovePerformed();
+            HidePanel();
         }
 
         private void OnConfirmNo()
@@ -46,6 +56,7 @@ namespace Player
             Debug.Log("No Move");
             HidePanel();
             _unitPopUpController.ShowActionPanel();
+            _turnBaseSystem.OnMoveCanceled();
         }
     }
 }

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b814c44de8e54eb494edfe4fd08f0b9d, type: 3}
   m_Name: PlayerSpawn
   m_EditorClassIdentifier: 
-  _validAreaColor: {r: 0.008384705, g: 1, b: 0, a: 0.05490196}
+  _validAreaColor: {r: 0.008384705, g: 1, b: 0, a: 0.02745098}
   _areaSprite: {fileID: 7482667652216324306, guid: 842dcb2ffcdf41943b75d7819e21afea, type: 3}

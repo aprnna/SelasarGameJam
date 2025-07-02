@@ -19,7 +19,6 @@ namespace Player
         public void Show(UnitPopUpController unitPopUpController)
         {
             gameObject.SetActive(true);
-
             _unitPopUpController = unitPopUpController;
 
             _buttonMove.onClick.RemoveAllListeners();
