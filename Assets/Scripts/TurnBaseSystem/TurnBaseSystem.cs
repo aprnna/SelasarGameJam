@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using Input;
 using Player;
 using TilemapLayer;
 using Turnbase_System;
@@ -17,36 +20,52 @@ public class TurnBaseSystem : MonoBehaviour
     [SerializeField] private BattleBoardTilemap _battleBoard;
     [SerializeField] private PreviewTilemap _previewTilemap;
     public UIManagerBattle UIManagerBattle => _uIManagerBattle;
-    
+    public UnitModel ActiveUnit => _activeUnit;
     private int _maxPlayer;
     private List<UnitData>  _players;
     private List<UnitData> _enemies;
-    private FiniteStateMachine<BattleState> _battleState;
-    private PlayerTurnState _playerTurnState;
-    private SelectCardState _selectCardState;
-    private EnemyTurnState _enemyTurnState;
-    private GameEndState _gameEndState;
+    public FiniteStateMachine<BattleState> BattleState { get; private set; }
+    public PlayerTurnState PlayerTurnState { get; private set; }
+    public SelectCardState SelectCardState { get; private set; }
+    public EnemyTurnState EnemyTurnState { get; private set; }
+    public GameEndState GameEndState { get; private set; }
     private List<Vector3> _LocPlayerSpawn;
-    private UnitData _activeUnitData;
+    private UnitModel _activeUnit;
+    private CancellationTokenSource _cts;
+    private CancellationToken _cancellationToken;
+    private Vector2 _mousePos;
+    private Camera _mainCamera;
     private void Awake()
     {
         _players        = new List<UnitData>();
         _enemies        = new List<UnitData>();
         _LocPlayerSpawn = new List<Vector3>();
+        _mainCamera = Camera.main;
 
         if (Instance == null) Instance = this;
         else Destroy(this);
     }
     private void Start()
     {
-        _selectCardState = new SelectCardState(this);
-        _playerTurnState = new PlayerTurnState(this);
-        _enemyTurnState = new EnemyTurnState(this);
-        _gameEndState = new GameEndState(this);
-        _battleState = new FiniteStateMachine<BattleState>(_selectCardState);
+        SelectCardState = new SelectCardState(this);
+        PlayerTurnState = new PlayerTurnState(this);
+        EnemyTurnState = new EnemyTurnState(this);
+        GameEndState = new GameEndState(this);
+        BattleState = new FiniteStateMachine<BattleState>(SelectCardState);
         
         InitializeLocPlayerSpawn();
     }
+
+    private void OnEnable()
+    {
+        InputManager.Instance.PlayerInput.Performed.OnDown += OnLeftMouseClicked;
+    }
+
+    private void OnDisable()
+    {
+        InputManager.Instance.PlayerInput.Performed.OnDown -= OnLeftMouseClicked;
+    }
+
 
     public void OnSelectPlayerCard(UnitData unitData)
     {
@@ -67,7 +86,7 @@ public class TurnBaseSystem : MonoBehaviour
     public void OnDoneSelectPlayer()
     {
         InitializeBattle();
-        _battleState.ChangeState(_playerTurnState);
+        BattleState.ChangeState(PlayerTurnState);
     }
 
     private void InitializeLocPlayerSpawn()
@@ -89,18 +108,66 @@ public class TurnBaseSystem : MonoBehaviour
     }
     public  void ShowPreview(Vector3 position)
         => _previewTilemap.ShowPreview(
-            _activeUnitData,
+            _activeUnit,
             position,
-            IsValid(position)
+            true
         );
     public void ClearPreview() 
         => _previewTilemap.ClearPreview();
     
     public bool IsValid(Vector3 worldPosition)
         => _battleBoard.IsEmpty(worldPosition);
-
-    public void SetActiveUnit(UnitData unitData)
+    public void StartPreview()
     {
-        _activeUnitData = unitData;
+        _cts = new CancellationTokenSource();
+        _cancellationToken = _cts.Token;
+        PreviewLoopAsync(_cancellationToken).Forget();
+    }
+
+    public void StopPreview()
+    {
+        if (_cts != null)
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+            _cts = null;
+        }
+        _activeUnit = null;
+        ClearPreview();
+    }
+    public async UniTaskVoid PreviewLoopAsync(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            _mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
+            var worldPosition = _mainCamera.ScreenToWorldPoint(_mousePos);
+            Debug.Log("PREVIEW "+ worldPosition);
+            ShowPreview(worldPosition);
+            await UniTask.Yield(token);
+        }
+    }
+    public void SetActiveUnit(UnitModel unitModel)
+    {
+        _activeUnit = unitModel;
+    }
+
+    public void OnLeftMouseClicked()
+    {
+        _mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
+        if (BattleState.CurrentState != PlayerTurnState) return;
+        var worldPosition = _mainCamera.ScreenToWorldPoint(_mousePos);
+        UnitModel item = _battleBoard.GetUnit(worldPosition);
+        Debug.Log(item != null );
+        if(item != null ) UIManagerBattle.ShowUnitAction(item, item.WorldCoords);
+        if(_activeUnit != null)
+        {
+            _battleBoard.Build(worldPosition, _prefabPlayer, _activeUnit.UnitData);
+            _battleArea.HideMoveTile();
+            _uIManagerBattle.HideUnitAction();
+            _battleBoard.RemoveUnit(_activeUnit);
+            StopPreview();
+            SetActiveUnit(null);
+        }
+
     }
 }

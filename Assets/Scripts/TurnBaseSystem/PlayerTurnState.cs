@@ -18,8 +18,7 @@ namespace Turnbase_System
 
         public override void OnUpdate()
         {
-            _mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
-            TurnBaseSystem.ShowPreview(_mousePos);
+
         }
 
         public override void OnExit()

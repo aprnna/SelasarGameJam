@@ -25,9 +25,9 @@ namespace Input
     {
         private InputValue<Vector2> _movement;
         private InputValue<Vector2> _mousePos;
-        private InputButton _attack;
+        private InputButton _performed;
         private InputButton _pause;
-        public InputButton Attack => _attack;
+        public InputButton Performed => _performed;
         public InputValue<Vector2> Movement => _movement;
         public InputValue<Vector2> MousePos => _mousePos;
         public InputButton Pause => _pause;
@@ -37,7 +37,7 @@ namespace Input
         public PlayerActionMap(InputActions action) : base(action)
         {
             _movement = new InputValue<Vector2>(action.Player.Move);
-            _attack = new InputButton(action.Player.Attack);
+            _performed = new InputButton(action.Player.Performed);
             _pause = new InputButton(action.Player.Pause);
             _mousePos = new InputValue<Vector2>(action.Player.Mouse);
 

@@ -16,14 +16,15 @@ namespace Player
         private Vector3 _worldPosition;
         public Vector3 ScreenPos{ get; private set; }
         private Camera _mainCamera;
-        
+        private TurnBaseSystem _turnBaseSystem;
         private void Awake()
         {
             _mainCamera = Camera.main;
-            Debug.Log(_mainCamera);
         }
-        
 
+        private void Start()
+        {
+        }
 
         public void ShowPopUp()
         {
@@ -37,6 +38,9 @@ namespace Player
 
         private void InitializePopUp(UnitModel item, Vector3 position)
         {
+            HideAttackPanel();
+            HideMovePanel();
+            
             CurrentItem = item;
             _worldPosition = position;
             gameObject.SetActive(true);
@@ -45,6 +49,7 @@ namespace Player
             screenPos.x += 120f;
             ScreenPos = screenPos;
             gameObject.transform.position = screenPos;
+            _turnBaseSystem = TurnBaseSystem.Instance;
         }
         public void ShowPopUpAction(UnitModel item, Vector3 position)
         {

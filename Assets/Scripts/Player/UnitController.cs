@@ -20,29 +20,6 @@ namespace Player
             var sprite = GetComponent<SpriteRenderer>();
             sprite.sprite = unitModel.UnitData.UnitSprite;
         }
-        
-        private void OnMouseDown()
-        {
-            _turnBaseSystem.UIManagerBattle.ShowUnitAction(_unitModel, gameObject.transform.position);
-        }
-
-        public void Attack()
-        {
-            
-        }
-        public void Stay()
-        {
-            
-        }
-        public void GetHit()
-        {
-            
-        }
-
-        public void Move()
-        {
-            _turnBaseSystem.ShowPlayerMove(_unitModel);
-        }
     }
 
 }
