@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89cad4ff3c784bcead21b351f2bdee94, type: 3}
   m_Name: TileBattleArea
   m_EditorClassIdentifier: 
-  _validAreaColor: {r: 0, g: 1, b: 0, a: 0}
+  _validAreaColor: {r: 1, g: 0.061469555, b: 0, a: 0.29803923}
   _areaSprite: {fileID: 7482667652216324306, guid: 842dcb2ffcdf41943b75d7819e21afea, type: 3}

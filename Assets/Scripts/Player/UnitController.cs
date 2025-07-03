@@ -8,7 +8,6 @@ namespace Player
     {
         private UnitModel _unitModel;
         private TurnBaseSystem _turnBaseSystem;
-
         private void Start()
         {
             _turnBaseSystem = TurnBaseSystem.Instance;
@@ -18,8 +17,10 @@ namespace Player
         {
             _unitModel = unitModel;
             var sprite = GetComponent<SpriteRenderer>();
-            sprite.sprite = unitModel.UnitData.UnitSprite;
+            // sprite.sprite = unitModel.UnitData.UnitSprite;
         }
+
+   
     }
 
 }

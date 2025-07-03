@@ -17,11 +17,19 @@ namespace Player
         public Vector3 ScreenPos{ get; private set; }
         private Camera _mainCamera;
         private TurnBaseSystem _turnBaseSystem;
-        // private bool _activePopUp;
         private bool _alreadyMove;
+        private bool _onMoveUnit;
         public bool AlreadyMove => _alreadyMove;
-        // public bool ActivePopUp => _activePopUp;
+        public bool OnMoveUnit => _onMoveUnit;
+        public void SetAlreadyMove(bool value)
+        {
+            _alreadyMove = value;
+        }
 
+        public void SetOnMoveUnit(bool value)
+        {
+            _onMoveUnit = value;
+        }
         private void Awake()
         {
             _mainCamera = Camera.main;
@@ -30,11 +38,6 @@ namespace Player
         private void Start()
         {
         }
-        // public void SetActivePopUp(bool value)
-        // {
-        //     _activePopUp = value;
-        // }
-
         public void ShowPopUp()
         {
             gameObject.SetActive(true);
@@ -43,34 +46,34 @@ namespace Player
         public void HidePopUp()
         {
             gameObject.SetActive(false);
-            // SetActivePopUp(false);
         }
 
         private void InitializePopUp(UnitModel item, Vector3 position)
         {
             HideAttackPanel();
             HideMovePanel();
-            // SetActivePopUp(true);
             
+            _turnBaseSystem = TurnBaseSystem.Instance;
             CurrentItem = item;
             _worldPosition = position;
             gameObject.SetActive(true);
+            _turnBaseSystem.SetActiveUnit(item);
+            
             Vector3 screenPos = _mainCamera.WorldToScreenPoint(position);
             screenPos.y += 100f; 
             screenPos.x += 120f;
             ScreenPos = screenPos;
             gameObject.transform.position = screenPos;
-            _turnBaseSystem = TurnBaseSystem.Instance;
         }
         public void ShowPopUpAction(UnitModel item, Vector3 position)
         {
             InitializePopUp(item, position);
-            _popUpAction.Show(this);
+            _popUpAction.Show();
         }
 
         public void ShowActionPanel()
         {
-            _popUpAction.Show(this);
+            _popUpAction.Show();
         }
         public void HideActionPanel()
         {
@@ -79,7 +82,7 @@ namespace Player
 
         public void ShowAttackPanel()
         {
-            _unitAttackPopup.Show(this);
+            _unitAttackPopup.Show();
         }
 
         public void HideAttackPanel()
@@ -88,7 +91,7 @@ namespace Player
         }
         public void ShowMovePanel()
         {
-            _unitMovePopup.Show(this);
+            _unitMovePopup.Show();
         }
 
         public void ShowConfirmMovePanel()

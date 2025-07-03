@@ -10,16 +10,30 @@ namespace Player
         [SerializeField] private Button _buttonMove;
         [SerializeField] private Button _buttonStay;
         [SerializeField] private Button _buttonAttack;
+        
         private UnitPopUpController _unitPopUpController;
         private TurnBaseSystem _turnBaseSystem;
+        private UnitModel _unitModel;
+        
         private void Start()
         {
             _turnBaseSystem = TurnBaseSystem.Instance;
         }
-        public void Show(UnitPopUpController unitPopUpController)
+
+        private void InitializeButton(UnitModel unitModel)
         {
+            _buttonMove.gameObject.SetActive(true);
+            _buttonStay.gameObject.SetActive(true);
+            _buttonAttack.gameObject.SetActive(true);
+            if(_unitPopUpController.AlreadyMove) _buttonMove.gameObject.SetActive(false);
+        }
+        public void Show()
+        {
+            _turnBaseSystem = TurnBaseSystem.Instance;
+            _unitPopUpController = _turnBaseSystem.UIManagerBattle.UnitController;
             gameObject.SetActive(true);
-            _unitPopUpController = unitPopUpController;
+            _unitModel = _unitPopUpController.CurrentItem;
+            InitializeButton(_unitModel);
 
             _buttonMove.onClick.RemoveAllListeners();
             _buttonStay.onClick.RemoveAllListeners();
@@ -35,22 +49,26 @@ namespace Player
         }
         private void OnMoveAction()
         {
-            Debug.Log("Move Action " + _unitPopUpController.CurrentItem.UnitData.Name);
+            // Debug.Log("Move Action " + _unitModel.UnitData.Name);
             HidePopUp();
-            _turnBaseSystem.ShowPlayerMove(_unitPopUpController.CurrentItem);
+            _turnBaseSystem.ShowPlayerMove(_unitModel);
             _unitPopUpController.ShowMovePanel();
         }
 
         private void OnStayAction()
         {
-            Debug.Log("Stay Action " + _unitPopUpController.CurrentItem.UnitData.Name);
+            // Debug.Log("Stay Action " + _unitModel.UnitData.Name);
             HidePopUp();
+            _unitPopUpController.HidePopUp();
+            _turnBaseSystem.UIManagerBattle.UnitController.SetAlreadyMove(false);
+            _turnBaseSystem.SetActiveUnit(null);
         }
 
         private void OnAttackAction()
         {
-            Debug.Log("Attack Action " + _unitPopUpController.CurrentItem.UnitData.Name);
+            // Debug.Log("Attack Action " + _unitModel.UnitData.Name);
             HidePopUp();
+            _turnBaseSystem.ShowPlayerAttack(_unitModel);
             _unitPopUpController.ShowAttackPanel();
         }
     }

@@ -14,23 +14,25 @@ public class TurnBaseSystem : MonoBehaviour
 {
     public static TurnBaseSystem Instance;
     [SerializeField] private UIManagerBattle _uIManagerBattle;
-    [SerializeField] private GameObject _prefabPlayer;
     
     [Header("TilemapLayer")]
     [SerializeField] private BattleAreaTilemap _battleArea;
     [SerializeField] private BattleBoardTilemap _battleBoard;
     [SerializeField] private PreviewTilemap _previewTilemap;
+
+    [Header("Enemy")] 
+    [SerializeField] private List<UnitData> _enemies;
     public UIManagerBattle UIManagerBattle => _uIManagerBattle;
     public UnitModel ActiveUnit => _activeUnit;
     private int _maxPlayer;
     private List<UnitData>  _players;
-    private List<UnitData> _enemies;
     public FiniteStateMachine<BattleState> BattleState { get; private set; }
     public PlayerTurnState PlayerTurnState { get; private set; }
     public SelectCardState SelectCardState { get; private set; }
     public EnemyTurnState EnemyTurnState { get; private set; }
     public GameEndState GameEndState { get; private set; }
     private List<Vector3> _LocPlayerSpawn;
+    private List<Vector3> _LocEnemySpawn;
     private UnitModel _activeUnit;
     private CancellationTokenSource _cts;
     private CancellationToken _cancellationToken;
@@ -69,7 +71,6 @@ public class TurnBaseSystem : MonoBehaviour
         InputManager.Instance.PlayerInput.Performed.OnDown -= OnLeftMouseClicked;
     }
 
-
     public void OnSelectPlayerCard(UnitData unitData)
     {
         Debug.Log(_players.Count+1);
@@ -101,10 +102,18 @@ public class TurnBaseSystem : MonoBehaviour
     {
         for (var idx=0; idx<_LocPlayerSpawn.Count ; idx++)
         {
-            _battleBoard.Build(_LocPlayerSpawn[idx],_prefabPlayer, _players[idx]);
+            _battleBoard.Build(_LocPlayerSpawn[idx], _players[idx].UnitPrefab, _players[idx]);
         }
     }
 
+    private void InitializeEnemy()
+    {
+        _LocEnemySpawn = _battleBoard.GetEnemyLocWorld();
+        for (var idx=0; idx<_LocEnemySpawn.Count ; idx++)
+        {
+            _battleBoard.Build(_LocEnemySpawn[idx],_enemies[idx].UnitPrefab, _enemies[idx]);
+        }
+    }
     public void ShowPlayerMove(UnitModel unitModel)
     {
         _battleArea.ShowMoveTile(unitModel);
@@ -113,6 +122,16 @@ public class TurnBaseSystem : MonoBehaviour
     public void HidePlayerMove()
     {
         _battleArea.HideMoveTile();
+    }
+
+    public void ShowPlayerAttack(UnitModel unitModel)
+    {
+        _battleArea.ShowAttackTile(unitModel);
+    }
+
+    public void HidePlayerAttack()
+    {
+        _battleArea.HideAttackTile();
     }
     public  void ShowPreview(Vector3 position)
         => _previewTilemap.ShowPreview(
@@ -175,7 +194,7 @@ public class TurnBaseSystem : MonoBehaviour
         EventSystem.current.RaycastAll(eventData, results);
         return results.Count > 0;
     }
-    public void OnLeftMouseClicked()
+    private void OnLeftMouseClicked()
     {
    
         _mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
@@ -183,8 +202,8 @@ public class TurnBaseSystem : MonoBehaviour
         if (BattleState.CurrentState != PlayerTurnState) return;
         var worldPosition = _mainCamera.ScreenToWorldPoint(_mousePos);
         UnitModel item = _battleBoard.GetUnit(worldPosition);
-        
-        if (item != null)
+        var unitController = _uIManagerBattle.UnitController;
+        if (item != null && !unitController.AlreadyMove && !unitController.OnMoveUnit)
         {
             _uIManagerBattle.ShowUnitAction(item, item.WorldCoords);
         }
@@ -199,12 +218,13 @@ public class TurnBaseSystem : MonoBehaviour
 
     public void OnMovePerformed()
     {
-        var newUnit = _battleBoard.Build(_pendingMove, _prefabPlayer, _activeUnit.UnitData);
+        var newUnit = _battleBoard.Build(_pendingMove, _activeUnit.UnitData.UnitPrefab, _activeUnit.UnitData);
         _battleBoard.RemoveUnit(_activeUnit);
         _activeUnit = newUnit;
         HidePlayerMove();
         StopPreview();
         _confirmMove = false;
+        _uIManagerBattle.UnitController.SetAlreadyMove(true);
         UIManagerBattle.ShowUnitAction(newUnit, _pendingMove);
     }
 
@@ -214,4 +234,35 @@ public class TurnBaseSystem : MonoBehaviour
         StopPreview();
         _confirmMove = false;
     }
+    public void OnAttackButton() {
+        Debug.Log(ActiveUnit);
+        if (ActiveUnit == null) return;
+        PerformAttack();
+        HidePlayerAttack();
+        UIManagerBattle.HideUnitAction();
+        SetActiveUnit(null);
+    }
+    private void PerformAttack() {
+        var origin = ActiveUnit.Coordinates;
+        var data   = ActiveUnit.UnitData;
+        var offsets = UnitAttackCalculate.GetOffsets(
+            data.AttackPattern, data.Range, data.Direction
+        );
+
+        foreach (var off in offsets) {
+            var cell = origin + off;
+            Vector3 world = _battleBoard.CellToWorld(cell) + new Vector3(0.5f, 0.5f);
+            var target = _battleBoard.GetUnit(world);
+                // && target.UnitData.UnitSide != data.UnitSide
+            if (target != null ) {
+                Debug.Log(target.UnitData.Name);
+            }
+        }
+    }
+
+    public void OnAttackCanceled()
+    {
+        HidePlayerAttack();
+    }
+ 
 }

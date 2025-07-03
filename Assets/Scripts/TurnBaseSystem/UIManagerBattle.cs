@@ -9,7 +9,7 @@ namespace Turnbase_System
     {
         [SerializeField] private GameObject _playerCards;
         [SerializeField] private UnitPopUpController _unitPopUpController;
-        public UnitPopUpController unitController => _unitPopUpController;
+        public UnitPopUpController UnitController => _unitPopUpController;
         public void ShowPlayerCards()
         {
             _playerCards.SetActive(true);

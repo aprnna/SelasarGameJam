@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce352f251fe044bba0c8b0579e864691, type: 3}
-  m_Name: Kamikaze 2
+  m_Name: Droid B102
   m_EditorClassIdentifier: 
-  _name: Zibuya 2
+  _name: Droid B102
   _unitSide: 1
   _unitSprite: {fileID: 6008755849024553855, guid: 444604a24f26dde498a1926c50506a50, type: 3}
-  _attackRange: {x: 2, y: 3}
-  _moveRange: 2
+  _moveRange: 3
+  _attackPattern: 1
+  _attackRange: 2
+  _attackDirection: 0

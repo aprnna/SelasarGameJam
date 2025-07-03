@@ -9,10 +9,12 @@ namespace Player
         [SerializeField] private Button _confirmYes;
         [SerializeField] private Button _confirmNo;
         private UnitPopUpController _unitPopUpController;
+        private TurnBaseSystem _turnBaseSystem;
 
-        public void Show(UnitPopUpController unitPopUpController)
+        public void Show()
         {
-            _unitPopUpController = unitPopUpController;
+            _turnBaseSystem = TurnBaseSystem.Instance;
+            _unitPopUpController = _turnBaseSystem.UIManagerBattle.UnitController;
             gameObject.SetActive(true);
 
             _confirmYes.onClick.RemoveAllListeners();
@@ -27,13 +29,14 @@ namespace Player
         }
         private void OnConfirmYes()
         {
-            Debug.Log("Yes Attack");
+            _turnBaseSystem.OnAttackButton();
+            _turnBaseSystem.UIManagerBattle.UnitController.SetAlreadyMove(false);
         }
 
         private void OnConfirmNo()
         {
-            Debug.Log("No Attack");
             HidePanel();
+            _turnBaseSystem.OnAttackCanceled();
             _unitPopUpController.ShowActionPanel();
         }
     }

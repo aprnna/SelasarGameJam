@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b814c44de8e54eb494edfe4fd08f0b9d, type: 3}
-  m_Name: PlayerSpawn
+  m_Script: {fileID: 11500000, guid: 15f3b2787f2948f4aa7937f9fe382e02, type: 3}
+  m_Name: EnemySpawn
   m_EditorClassIdentifier: 
-  _validAreaColor: {r: 0.008384705, g: 1, b: 0, a: 0.2901961}
+  _validAreaColor: {r: 0, g: 1, b: 0.804333, a: 0.5019608}
   _areaSprite: {fileID: 7482667652216324306, guid: 842dcb2ffcdf41943b75d7819e21afea, type: 3}

@@ -17,14 +17,15 @@ namespace Player
         private UnitPopUpController _unitPopUpController;
         private TurnBaseSystem _turnBaseSystem;
 
-        public void Show(UnitPopUpController unitPopUpController)
+        public void Show()
         {
-            _unitPopUpController = unitPopUpController;
+            _turnBaseSystem = TurnBaseSystem.Instance;
+            _unitPopUpController = _turnBaseSystem.UIManagerBattle.UnitController;
+            _unitModel = _unitPopUpController.CurrentItem;
             _movePopup.SetActive(true);
             
-            _turnBaseSystem = TurnBaseSystem.Instance;
-            _turnBaseSystem.SetActiveUnit(unitPopUpController.CurrentItem);
             _turnBaseSystem.StartPreview();
+            _unitPopUpController.SetOnMoveUnit(true);
             
             _confirmYes.onClick.RemoveAllListeners();
             _confirmNo.onClick.RemoveAllListeners();
@@ -46,17 +47,19 @@ namespace Player
         }
         private void OnConfirmYes()
         {
-            Debug.Log("Yes Move");
-            _turnBaseSystem.OnMovePerformed();
+            // Debug.Log("Yes Move");
+           _turnBaseSystem.OnMovePerformed();
             HidePanel();
+            _unitPopUpController.SetOnMoveUnit(false);
         }
 
         private void OnConfirmNo()
         {
-            Debug.Log("No Move");
+            // Debug.Log("No Move");
             HidePanel();
             _unitPopUpController.ShowActionPanel();
             _turnBaseSystem.OnMoveCanceled();
+            _unitPopUpController.SetOnMoveUnit(false);
         }
     }
 }

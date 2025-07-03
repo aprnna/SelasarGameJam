@@ -29,8 +29,8 @@ namespace TilemapLayer
             var player = Instantiate( prefab, position, Quaternion.identity);
             var unit = new UnitModel(_tilemap, unitData, player ,baseCoords, position);
             _unit.Add(baseCoords, unit);
-            var playerController = player.transform.GetComponent<UnitController>();
-            playerController.Initialize(unit);
+            // var playerController = player.transform.GetComponent<UnitController>();
+            // playerController.Initialize(unit);
             return unit;
         }
         
@@ -88,6 +88,11 @@ namespace TilemapLayer
             _unit.Remove(buildable.Coordinates);
             if (buildable.GameObject != null)
                 Destroy(buildable.GameObject);
+        }
+
+        public Vector3 CellToWorld(Vector3Int baseCoords)
+        {
+            return _tilemap.CellToWorld(baseCoords);
         }
     }
 }
