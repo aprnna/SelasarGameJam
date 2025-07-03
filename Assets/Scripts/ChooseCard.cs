@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
@@ -16,7 +17,7 @@ public class ChooseCard : MonoBehaviour
     private List<CardSO> _selectedCard = new List<CardSO>();
 
     [SerializeField]
-    private Transform _centerPanel;
+    private RectTransform _centerPanel;
 
     [SerializeField]
     private RectTransform _bottomPanel;
@@ -31,7 +32,8 @@ public class ChooseCard : MonoBehaviour
         CardManager.Instance.SpawnCard(_bottomPanel);
 
         _bottomPanel
-            .DOAnchorPosX(_bottomPanelTargetPos.x, 0.4f).SetEase(Ease.OutBack)
+            .DOAnchorPosX(_bottomPanelTargetPos.x, 0.4f)
+            .SetEase(Ease.OutBack)
             .OnComplete(() =>
             {
                 foreach (Transform item in _bottomPanel)
@@ -82,5 +84,20 @@ public class ChooseCard : MonoBehaviour
     {
         _selectedCardPositionValue[targetPos] = false;
         _selectedCard.Remove(card);
+    }
+
+    public void FinishChooseCard(Action onComplete)
+    {
+        _bottomPanel
+            .DOAnchorPosX(800, 0.3f)
+            .OnComplete(() =>
+            {
+                _centerPanel
+                    .DOAnchorPosX(-800, 0.3f)
+                    .OnComplete(() =>
+                    {
+                        onComplete?.Invoke();
+                    });
+            });
     }
 }

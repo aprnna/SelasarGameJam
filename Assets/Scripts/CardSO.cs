@@ -6,4 +6,5 @@ public class CardSO : ScriptableObject
 {
     public Sprite cardSprite;
     public string descripion;
+    public CardType cardType;
 }

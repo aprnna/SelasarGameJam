@@ -30,6 +30,24 @@ public class CardManager : PersistentSingleton<CardManager>
             _playerCard.Add(card);
     }
 
+    public Dictionary<CardType, int> GetPlayerCardData()
+    {
+        Dictionary<CardType, int> playerCardData = new Dictionary<CardType, int>();
+        foreach (CardSO item in _playerCard)
+        {
+            if (playerCardData.ContainsKey(item.cardType))
+            {
+                playerCardData[item.cardType] += 1;
+            }
+            else
+            {
+                playerCardData.Add(item.cardType, 1);
+            }
+        }
+
+        return playerCardData;
+    }
+
     public bool IsFull()
     {
         return _playerCard.Count == _maxCard;
@@ -56,7 +74,10 @@ public class CardManager : PersistentSingleton<CardManager>
 
     public void DestroyChooseCard()
     {
-        Destroy(_chooseCard.gameObject);
+        _chooseCard.FinishChooseCard(() =>
+        {
+            Destroy(_chooseCard.gameObject);
+        });
     }
 
     public void SpawnRecruitCard()
@@ -66,6 +87,9 @@ public class CardManager : PersistentSingleton<CardManager>
 
     public void DestroyRecruitCard()
     {
-        Destroy(_recruitCard.gameObject);
+        _recruitCard.FinishRecruit(() =>
+        {
+            Destroy(_recruitCard.gameObject);
+        });
     }
 }

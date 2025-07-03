@@ -1,12 +1,19 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class RecruitCard : MonoBehaviour
 {
-[SerializeField]
+    [SerializeField]
     private List<Vector2> _selectedCardPosition;
+
+    [SerializeField]
+    private List<CardSO> _recruitCardOption;
+
+    public CardUI _cardPrefab;
 
     [SerializeField]
     private Vector2 _centerPanelTargetPos;
@@ -28,7 +35,16 @@ public class RecruitCard : MonoBehaviour
             _selectedCardPositionValue.Add(_selectedCardPosition[i], false);
         }
 
-        CardManager.Instance.SpawnCard(_centerPanel);
+        Dictionary<CardType, int> cardCounts = CardManager.Instance.GetPlayerCardData();
+        var validCards = _recruitCardOption
+            .Where(card => !cardCounts.ContainsKey(card.cardType) || cardCounts[card.cardType] < 2)
+            .ToList();
+
+        for (var i = 0; i < 4; i++)
+        {
+            CardUI spawnCard = Instantiate(_cardPrefab, _centerPanel);
+            spawnCard.cardSO = validCards[UnityEngine.Random.Range(0, validCards.Count)];
+        }
 
         _centerPanel
             .DOAnchorPosX(_centerPanelTargetPos.x, 0.4f)
@@ -39,7 +55,7 @@ public class RecruitCard : MonoBehaviour
                     CardUI card = item.GetComponent<CardUI>();
                     card.SetOriginalPosition();
                     card.SetRecruitCard();
-                    
+
                     HorizontalLayoutGroup layoutGroup =
                         _centerPanel.GetComponent<HorizontalLayoutGroup>();
                     layoutGroup.enabled = false;
@@ -83,5 +99,24 @@ public class RecruitCard : MonoBehaviour
     {
         _selectedCardPositionValue[targetPos] = false;
         _selectedCard.Remove(card);
+    }
+
+    public void FinishRecruit(Action onComplete)
+    {
+        _centerPanel
+            .DOAnchorPosX(-800, 0.3f)
+            .OnComplete(() =>
+            {
+                _bottomPanel
+                    .DOAnchorPosX(800, 0.3f)
+                    .OnComplete(() =>
+                    {
+                        foreach (CardSO item in _selectedCard)
+                        {
+                            CardManager.Instance.AddCard(item);
+                        }
+                        onComplete?.Invoke();
+                    });
+            });
     }
 }
