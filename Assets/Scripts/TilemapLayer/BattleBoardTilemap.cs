@@ -12,7 +12,7 @@ namespace TilemapLayer
         [SerializeField] private ColliderTilemap _colliderTilemap;
         private Dictionary<Vector3Int,UnitModel> _unit = new();
 
-        private void Start()
+        public void HideTileView()
         {
             if (_tilemap != null)
             {
@@ -33,36 +33,19 @@ namespace TilemapLayer
             // playerController.Initialize(unit);
             return unit;
         }
-        
-        public List<Vector3> GetPlayerLocWorld()
+        public SortedDictionary<int, Vector3> GetSpawnLoc(UnitSide side)
         {
-            BoundsInt bounds = _tilemap.cellBounds;
-            List<Vector3> playerLoc = new List<Vector3>();
-            foreach (Vector3Int pos in bounds.allPositionsWithin)
+            var dict = new SortedDictionary<int, Vector3>();
+            foreach (var pos in _tilemap.cellBounds.allPositionsWithin)
             {
-                TileBase tile = _tilemap.GetTile(pos);
-                if (tile is TilePlayerSpawn)
+                var tile = _tilemap.GetTile(pos) as TileSpawn;
+                if (tile != null && tile.SpawnSide == side)
                 {
-                    Vector3 worldPos = _tilemap.CellToWorld(pos) ;
-                    playerLoc.Add(worldPos);
+                    var world = _tilemap.CellToWorld(pos) + new Vector3(.5f, .5f, 0);
+                    dict[tile.SpawnIndex] = world;
                 }
             }
-            return playerLoc;
-        }
-        public List<Vector3> GetEnemyLocWorld()
-        {
-            BoundsInt bounds = _tilemap.cellBounds;
-            List<Vector3> enemyLoc = new List<Vector3>();
-            foreach (Vector3Int pos in bounds.allPositionsWithin)
-            {
-                TileBase tile = _tilemap.GetTile(pos);
-                if (tile is TileEnemySpawn)
-                {
-                    Vector3 worldPos = _tilemap.CellToWorld(pos);
-                    enemyLoc.Add(worldPos);
-                }
-            }
-            return enemyLoc;
+            return dict;
         }
         public bool IsEmpty(Vector3 worldCoords)
         {

@@ -19,7 +19,7 @@ namespace Player
         public AttackDirection Direction => _attackDirection;
         public int Range => _attackRange;
         public int MoveRange => _moveRange;
-        public Sprite UnitSprite => UnitPrefab.GetComponent<Sprite>();
+        public Sprite UnitSprite => UnitPrefab.GetComponent<SpriteRenderer>().sprite;
     }
     
     public enum UnitSide

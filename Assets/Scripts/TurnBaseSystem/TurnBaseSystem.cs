@@ -31,8 +31,6 @@ public class TurnBaseSystem : MonoBehaviour
     public SelectCardState SelectCardState { get; private set; }
     public EnemyTurnState EnemyTurnState { get; private set; }
     public GameEndState GameEndState { get; private set; }
-    private List<Vector3> _LocPlayerSpawn;
-    private List<Vector3> _LocEnemySpawn;
     private UnitModel _activeUnit;
     private CancellationTokenSource _cts;
     private CancellationToken _cancellationToken;
@@ -43,8 +41,6 @@ public class TurnBaseSystem : MonoBehaviour
     private void Awake()
     {
         _players        = new List<UnitData>();
-        _enemies        = new List<UnitData>();
-        _LocPlayerSpawn = new List<Vector3>();
         _mainCamera = Camera.main;
 
         if (Instance == null) Instance = this;
@@ -57,8 +53,8 @@ public class TurnBaseSystem : MonoBehaviour
         EnemyTurnState = new EnemyTurnState(this);
         GameEndState = new GameEndState(this);
         BattleState = new FiniteStateMachine<BattleState>(SelectCardState);
-        
-        InitializeLocPlayerSpawn();
+        InitializePlayerLoc();
+        InitializeEnemy();
     }
 
     private void OnEnable()
@@ -89,29 +85,31 @@ public class TurnBaseSystem : MonoBehaviour
 
     public void OnDoneSelectPlayer()
     {
-        InitializeBattle();
+        InitializePlayer();
         BattleState.ChangeState(PlayerTurnState);
+        _battleBoard.HideTileView();
     }
-
-    private void InitializeLocPlayerSpawn()
+    private void InitializePlayerLoc()
     {
-        _LocPlayerSpawn = _battleBoard.GetPlayerLocWorld();
-        _maxPlayer = _LocPlayerSpawn.Count+1;
+        var playerSpawns = _battleBoard.GetSpawnLoc(UnitSide.Player);   // Sorted by key
+        _maxPlayer = playerSpawns.Count+1;
     }
-    private void InitializeBattle()
+    private void InitializePlayer()
     {
-        for (var idx=0; idx<_LocPlayerSpawn.Count ; idx++)
+        var playerSpawns = _battleBoard.GetSpawnLoc(UnitSide.Player);   // Sorted by key
+        int i = 0;
+        foreach (var kv in playerSpawns)
         {
-            _battleBoard.Build(_LocPlayerSpawn[idx], _players[idx].UnitPrefab, _players[idx]);
+            _battleBoard.Build(kv.Value, _players[i++].UnitPrefab, _players[i-1]);
         }
     }
-
     private void InitializeEnemy()
     {
-        _LocEnemySpawn = _battleBoard.GetEnemyLocWorld();
-        for (var idx=0; idx<_LocEnemySpawn.Count ; idx++)
+        var enemySpawns = _battleBoard.GetSpawnLoc(UnitSide.Enemy);   // Sorted by key
+        int i = 0;
+        foreach (var kv in enemySpawns)
         {
-            _battleBoard.Build(_LocEnemySpawn[idx],_enemies[idx].UnitPrefab, _enemies[idx]);
+            _battleBoard.Build(kv.Value, _enemies[i++].UnitPrefab, _enemies[i-1]);
         }
     }
     public void ShowPlayerMove(UnitModel unitModel)
