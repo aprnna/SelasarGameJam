@@ -477,7 +477,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 536570336}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
-        m_MethodName: DestroyRecruitCard
+        m_MethodName: DestroyChooseCard
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -559,6 +559,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 611a69e651ff4024f8400581e24ea562, type: 2}
   - {fileID: 11400000, guid: 611a69e651ff4024f8400581e24ea562, type: 2}
   - {fileID: 11400000, guid: e24221b3a80d6bc4b82afaa32e430699, type: 2}
+  - {fileID: 11400000, guid: 8db78acf2504a1c4faa9bb851ee83c38, type: 2}
+  - {fileID: 11400000, guid: 8db78acf2504a1c4faa9bb851ee83c38, type: 2}
+  - {fileID: 11400000, guid: 8db78acf2504a1c4faa9bb851ee83c38, type: 2}
   - {fileID: 11400000, guid: 8db78acf2504a1c4faa9bb851ee83c38, type: 2}
   _maxCard: 8
   _cardPrefab: {fileID: 5969575849203548813, guid: 79199dae3925c4b4a801677605a84e58, type: 3}
@@ -2152,7 +2155,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 536570336}
         m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
-        m_MethodName: SpawnRecruitCard
+        m_MethodName: SpawnChooseCard
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
