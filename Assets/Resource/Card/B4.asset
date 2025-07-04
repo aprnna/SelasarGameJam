@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: B4
   m_EditorClassIdentifier: 
   cardSprite: {fileID: -4641275714127379593, guid: 549dcb690234bf84ebe13b5db2ed640a, type: 3}
-  descripion: 
+  cardName: Droid B402
   cardType: 7

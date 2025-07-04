@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: C
   m_EditorClassIdentifier: 
   cardSprite: {fileID: -1753661489005427037, guid: 6a7bb19aca052c04a9f957cb9f6e895d, type: 3}
-  descripion: 
+  cardName: Advance Droid
   cardType: 8

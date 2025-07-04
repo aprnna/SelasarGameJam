@@ -28,6 +28,9 @@ public class RecruitCard : MonoBehaviour
     [SerializeField]
     private RectTransform _bottomPanel;
 
+    [SerializeField]
+    private Button _confirmButton;
+
     void Start()
     {
         for (var i = 0; i < _selectedCardPosition.Count; i++)
@@ -62,6 +65,15 @@ public class RecruitCard : MonoBehaviour
                     layoutGroup.enabled = false;
                 }
             });
+        SetConfirmButton();
+    }
+
+    private void SetConfirmButton()
+    {
+        _confirmButton.onClick.AddListener(() =>
+        {
+            CardManager.Instance.DestroyRecruitCard();
+        });
     }
 
     public Transform GetCenterPanel()

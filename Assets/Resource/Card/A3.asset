@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: A3
   m_EditorClassIdentifier: 
   cardSprite: {fileID: 4058025459245269310, guid: b69cbc53a2829b64387eefc853f1cd13, type: 3}
-  descripion: 
+  cardName: Robo A301
   cardType: 2

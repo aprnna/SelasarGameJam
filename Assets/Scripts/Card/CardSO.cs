@@ -5,6 +5,6 @@ using UnityEngine;
 public class CardSO : ScriptableObject
 {
     public Sprite cardSprite;
-    public string descripion;
+    public string cardName;
     public CardType cardType;
 }

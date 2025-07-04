@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: D
   m_EditorClassIdentifier: 
   cardSprite: {fileID: -7474897090206559372, guid: 81721925ff14afe43ab11f1aacc9bc2e, type: 3}
-  descripion: 
+  cardName: Advance Robot
   cardType: 9

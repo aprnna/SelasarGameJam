@@ -1,5 +1,6 @@
 using System;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -33,6 +34,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         // _originalPosition = transform.localPosition;
         _rectTransform = GetComponent<RectTransform>();
         GetComponent<Image>().sprite = cardSO.cardSprite;
+        GetComponentInChildren<TextMeshProUGUI>().text = cardSO.cardName;
     }
 
     public void SetChooseCard()
