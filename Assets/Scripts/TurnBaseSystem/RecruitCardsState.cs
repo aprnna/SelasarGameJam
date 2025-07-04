@@ -1,19 +1,19 @@
-using Cysharp.Threading.Tasks;
 using Input;
 using UnityEngine;
 
 namespace Turnbase_System
 {
-    public class PlayerTurnState:BattleState
+    public class RecruitCardsState:BattleState
     {
         private Vector2 _mousePos;
-        public PlayerTurnState(TurnBaseSystem turnBaseSystem) : base(turnBaseSystem)
+        public RecruitCardsState(TurnBaseSystem turnBaseSystem) : base(turnBaseSystem)
         {
             
         }
         public override void OnEnter()
         {
-            UIManagerBattle.ShowAnnouncement("PLAYER TURN", 0.8f).Forget();
+            Debug.Log("RECRUIT PLAYER");
+            
         }
 
         public override void OnUpdate()

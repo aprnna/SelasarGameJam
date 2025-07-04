@@ -15,3 +15,4 @@ MonoBehaviour:
   cardSprite: {fileID: -4641275714127379593, guid: 549dcb690234bf84ebe13b5db2ed640a, type: 3}
   cardName: Droid B402
   cardType: 7
+  UnitData: {fileID: 11400000, guid: ea27eeecd4dc92d42aa1942f6b0537d8, type: 2}

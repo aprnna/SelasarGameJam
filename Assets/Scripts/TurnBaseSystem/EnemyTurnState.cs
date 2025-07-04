@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Player;
@@ -7,12 +8,22 @@ using UnityEngine;
 namespace Turnbase_System
 {
     public class EnemyTurnState:BattleState
-    { 
+    {
+        private TurnBaseSystem tbs;
         public EnemyTurnState(TurnBaseSystem tbs) : base(tbs) { }
 
         public override void OnEnter()
         {
-            ExecuteSingleEnemyAction().Forget();
+
+            tbs = TurnBaseSystem;
+            StartEnemyTurn().Forget();
+        }
+
+        private async UniTask StartEnemyTurn()
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(1), ignoreTimeScale: false);
+            await UIManagerBattle.ShowAnnouncement("Enemy Turn",0.8f);
+            await ExecuteSingleEnemyAction();
         }
 
         public override void OnUpdate() { }
@@ -21,11 +32,11 @@ namespace Turnbase_System
         {
             TurnBaseSystem.HidePlayerMove();
             TurnBaseSystem.HidePlayerAttack();
+        
         }
 
         private async UniTaskVoid ExecuteSingleEnemyAction3()
         {
-             var tbs     = TurnBaseSystem.Instance;
             var enemies = tbs.GetAliveUnitsBySide(UnitSide.Enemy);
             var players = tbs.GetAliveUnitsBySide(UnitSide.Player);
 
@@ -64,7 +75,7 @@ namespace Turnbase_System
             if (!inRange)
             {
                 tbs.ShowPlayerMove(enemy);
-                await UniTask.Delay(200);
+                await UniTask.Delay(500);
 
                 // Hitung sel langkah
                 var stepCell = GetStepTowards(enemy.Coordinates, target.Coordinates);
@@ -74,7 +85,7 @@ namespace Turnbase_System
                 if (tbs.GetUnit(worldPos) == null)
                 {
                     tbs.MoveEnemy(enemy, worldPos);
-                    await UniTask.Delay(300);
+                    await UniTask.Delay(600);
                     // update reference setelah move
                     enemy = tbs.ActiveUnit;
                 }
@@ -86,17 +97,15 @@ namespace Turnbase_System
             if (tbs.IsInAttackRange(enemy, target))
             {
                 tbs.ShowPlayerAttack(enemy);
-                await UniTask.Delay(200);
-                tbs.PerformAttack();
                 await UniTask.Delay(300);
+                tbs.PerformAttack();
+                await UniTask.Delay(400);
                 tbs.HidePlayerAttack();
             }
 
             tbs.BattleState.ChangeState(tbs.PlayerTurnState);
 
         }
-        
-
         private async UniTaskVoid ExecuteSingleEnemyAction2()
         {
             var tbs     = TurnBaseSystem.Instance;
@@ -189,9 +198,8 @@ namespace Turnbase_System
             // Giliran selesai
             tbs.BattleState.ChangeState(tbs.PlayerTurnState);
         }
-        private async UniTaskVoid ExecuteSingleEnemyAction()
+        private async UniTask ExecuteSingleEnemyAction()
         {
-            var tbs     = TurnBaseSystem;
             var enemies = tbs.GetAliveUnitsBySide(UnitSide.Enemy);
             var players = tbs.GetAliveUnitsBySide(UnitSide.Player);
             Debug.Log("ENEMIES " + enemies.Count + "PLAYER "+ players.Count);
@@ -237,7 +245,7 @@ namespace Turnbase_System
             if (adjacent && !canAttackNow)
             {
                 tbs.ShowPlayerMove(enemy);
-                await UniTask.Delay(200);
+                await UniTask.Delay(700);
                 // coba tiap offset: pindah ke posisi berlawanan offset
                 foreach (var off in offsets)
                 {
@@ -246,7 +254,7 @@ namespace Turnbase_System
                     if (tbs.GetUnit(worldCir) == null)
                     {
                         tbs.MoveEnemy(enemy, worldCir);
-                        await UniTask.Delay(300);
+                        await UniTask.Delay(400);
                         enemy = tbs.ActiveUnit;
                         break;
                     }
@@ -257,7 +265,7 @@ namespace Turnbase_System
             {
                 // satu langkah mendekat biasa
                 tbs.ShowPlayerMove(enemy);
-                await UniTask.Delay(200);
+                await UniTask.Delay(500);
                 var step      = GetStepTowards(enemy.Coordinates, target.Coordinates);
                 var worldStep = tbs.CellToWorld(step) + new Vector3(0.5f, 0.5f);
                 if (tbs.GetUnit(worldStep) == null)
@@ -277,19 +285,23 @@ namespace Turnbase_System
                     if (enemy.Coordinates + off == target.Coordinates)
                     {
                         tbs.ShowPlayerAttack(enemy);
-                        await UniTask.Delay(200);
+                        await UniTask.Delay(400);
                         tbs.PerformAttack();
-                        await UniTask.Delay(300);
+                        await UniTask.Delay(500);
                         tbs.HidePlayerAttack();
                         break;
                     }
                 }
             }
-            if(tbs.GetAliveUnitsBySide(UnitSide.Player).Count > 0) tbs.BattleState.ChangeState(tbs.PlayerTurnState);
-            else
+            Debug.Log("TEST "+ tbs.GetAliveUnitsBySide(UnitSide.Player).Count);
+            if(tbs.GetAliveUnitsBySide(UnitSide.Player).Count == 0) 
             {
                 tbs.SetBattleResult(BattleResult.EnemyWin);
                 tbs.BattleState.ChangeState(tbs.GameEndState);
+            }
+            if (tbs.GetAliveUnitsBySide(UnitSide.Player).Count > 0)
+            {
+                tbs.BattleState.ChangeState(tbs.PlayerTurnState);
             }
         }
 

@@ -15,3 +15,4 @@ MonoBehaviour:
   cardSprite: {fileID: -6531501777837425872, guid: ba21ac890eb761e4a86a603cb196dc39, type: 3}
   cardName: Droid B202
   cardType: 5
+  UnitData: {fileID: 11400000, guid: 929c0a1c0c0124c44ae06190404112ce, type: 2}

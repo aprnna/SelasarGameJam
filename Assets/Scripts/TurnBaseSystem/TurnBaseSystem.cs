@@ -8,6 +8,7 @@ using TilemapLayer;
 using Turnbase_System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 public enum BattleResult
@@ -59,9 +60,25 @@ public class TurnBaseSystem : MonoBehaviour
         PlayerTurnState = new PlayerTurnState(this);
         EnemyTurnState = new EnemyTurnState(this);
         GameEndState = new GameEndState(this);
+        Initialize();
+    }
+
+    public void StartGame()
+    {
         BattleState = new FiniteStateMachine<BattleState>(SelectCardState);
+        UIManagerBattle.HideTutorial();
         InitializePlayerLoc();
         InitializeEnemy();
+    }
+    private void Initialize()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        if(scene.name == "Stage1") UIManagerBattle.ShowTutorial();
+        else
+        {
+            InitializePlayerLoc();
+            InitializeEnemy();
+        }
     }
 
     private void OnEnable()
@@ -78,25 +95,25 @@ public class TurnBaseSystem : MonoBehaviour
     {
         BattleResult = result;
     }
-    public void OnSelectPlayerCard(UnitData unitData)
-    {
-        Debug.Log(_players.Count+1);
-        if (_players.Count+1 <= _maxPlayer)
-        {
-            if (unitData.UnitSide == UnitSide.Player)
-            {
-                _players.Add(unitData);
-            }
-        }
-        else
-        {
-            Debug.Log("Max");
-        }
-    }
 
+    public void OnVictoryPlayer()
+    {
+        UIManagerBattle.ShowRecruitCards();
+        UIManagerBattle.HideVictoryPanel();
+    }
+    public void SetPlayer(UnitData unitData)
+    {
+        _players.Add(unitData);
+    }
     public void OnDoneSelectPlayer()
     {
+        CompleteSelectCard().Forget();
+    }
+    
+    private async UniTask CompleteSelectCard()
+    {
         InitializePlayer();
+        await UIManagerBattle.ShowAnnouncement("BATTLE START");
         BattleState.ChangeState(PlayerTurnState);
         _battleBoard.HideTileView();
     }
@@ -245,7 +262,6 @@ public class TurnBaseSystem : MonoBehaviour
         _confirmMove = false;
     }
     public void OnAttackButton() {
-        Debug.Log(ActiveUnit);
         if (ActiveUnit == null) return;
         PerformAttack();
         HidePlayerAttack();
@@ -309,6 +325,7 @@ public class TurnBaseSystem : MonoBehaviour
         {
             SetBattleResult(BattleResult.EnemyWin);
             BattleState.ChangeState(GameEndState);
+            return;
         }
         if(enemies.Count > 0)  BattleState.ChangeState(EnemyTurnState);
         else

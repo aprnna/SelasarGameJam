@@ -25,8 +25,11 @@ public class ChooseCard : MonoBehaviour
     [SerializeField]
     private Button _confirmButton;
 
+    private TurnBaseSystem _turnBaseSystem;
+
     void Start()
     {
+        _turnBaseSystem = TurnBaseSystem.Instance;
         for (var i = 0; i < _selectedCardPosition.Count; i++)
         {
             _selectedCardPositionValue.Add(_selectedCardPosition[i], false);
@@ -115,8 +118,9 @@ public class ChooseCard : MonoBehaviour
                     {
                         foreach (var item in _selectedCard)
                         {
-                            Debug.Log(item);
+                           _turnBaseSystem.SetPlayer(item.UnitData);
                         }
+                        _turnBaseSystem.OnDoneSelectPlayer();
                         onComplete?.Invoke();
                     });
             });

@@ -15,3 +15,4 @@ MonoBehaviour:
   cardSprite: {fileID: -8653568522032666819, guid: d0dc79044b4fbd54fa7c6d8c1fa4f13d, type: 3}
   cardName: Robo A401
   cardType: 3
+  UnitData: {fileID: 11400000, guid: 6357d190d5c501d44bce8c4cb47ddc04, type: 2}

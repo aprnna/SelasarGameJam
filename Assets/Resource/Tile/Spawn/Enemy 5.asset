@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f5ba67fdbcd4047886a5c4475f56ede, type: 3}
   m_Name: Enemy 5
   m_EditorClassIdentifier: 
-  _validAreaColor: {r: 1, g: 0, b: 0.04824114, a: 0.3}
+  _validAreaColor: {r: 1, g: 0, b: 0.04824114, a: 1}
   _areaSprite: {fileID: 2488784176724167040, guid: 5c4016a0021869d489e3a9984e651d17, type: 3}
   _spawnSide: 0
   _spawnIndex: 5

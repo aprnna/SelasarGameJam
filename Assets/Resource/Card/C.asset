@@ -15,3 +15,4 @@ MonoBehaviour:
   cardSprite: {fileID: -1753661489005427037, guid: 6a7bb19aca052c04a9f957cb9f6e895d, type: 3}
   cardName: Advance Droid
   cardType: 8
+  UnitData: {fileID: 11400000, guid: 2a9fe5031b57eec4fb7ba3991ea69397, type: 2}

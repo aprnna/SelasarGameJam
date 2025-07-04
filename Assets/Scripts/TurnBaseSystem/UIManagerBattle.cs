@@ -1,3 +1,5 @@
+using System;
+using Cysharp.Threading.Tasks;
 using Player;
 using TilemapLayer;
 using UnityEngine;
@@ -7,19 +9,46 @@ namespace Turnbase_System
 {
     public class UIManagerBattle:MonoBehaviour
     {
-        [SerializeField] private GameObject _playerCards;
         [SerializeField] private UnitPopUpController _unitPopUpController;
         [SerializeField] private GameObject _explosivePS;
+        [SerializeField] private GameObject _tutorialPanel;
+        [SerializeField] private GameAnnouncement _gameAnnouncement;
+        [SerializeField] private GameObject _victoryPanel;
+        [SerializeField] private GameObject _losePanel;
+        private CardManager _cardManager;
+
         public UnitPopUpController UnitController => _unitPopUpController;
+
+        private void Start()
+        {
+            _cardManager = CardManager.Instance;
+        }
+        
         public void ShowPlayerCards()
         {
-            _playerCards.SetActive(true);
+            _cardManager.SpawnChooseCard();
         }
         public void HidePlayerCards()
         {
-            _playerCards.SetActive(false);
+            _cardManager.DestroyChooseCard();
+        }
+        public void ShowRecruitCards()
+        {
+            _cardManager.SpawnRecruitCard();
+        }
+        public void HideRecruitCards()
+        {
+            _cardManager.DestroyRecruitCard();
         }
 
+        public void ShowTutorial()
+        {
+            _tutorialPanel.SetActive(true);
+        }
+        public void HideTutorial()
+        {
+            _tutorialPanel.SetActive(false);
+        }
         public void HideUnitAction()
         {
             _unitPopUpController.HidePopUp();
@@ -34,9 +63,31 @@ namespace Turnbase_System
             _unitPopUpController.ShowConfirmMovePanel();
         }
 
-        public void StartVFXExplosive(Vector3 position)
+        public  void StartVFXExplosive(Vector3 position)
         {
             Instantiate(_explosivePS, position, Quaternion.identity);
+        }
+
+        public async UniTask ShowAnnouncement(string message, float stayDuration = 1.2f)
+        {
+            await _gameAnnouncement.ShowAnnouncement(message, stayDuration);
+        }
+
+        public void ShowVictoryPanel()
+        {
+            _victoryPanel.SetActive(true);
+        }
+        public void HideVictoryPanel()
+        {
+            _victoryPanel.SetActive(false);
+        }
+        public void ShowLosePanel()
+        {
+            _losePanel.SetActive(true);
+        }
+        public void HideLosePanel()
+        {
+            _losePanel.SetActive(false);
         }
     }
 }

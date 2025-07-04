@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+
 namespace Turnbase_System
 {
     public class SelectCardState:BattleState
