@@ -10,7 +10,7 @@ namespace TilemapLayer
     {
         [SerializeField] private BattleAreaTilemap _battleAreaTilemap;
         [SerializeField] private ColliderTilemap _colliderTilemap;
-        private Dictionary<Vector3Int,UnitModel> _unit = new();
+        private Dictionary<Vector3Int,UnitModel> _units = new();
 
         public void HideTileView()
         {
@@ -28,7 +28,7 @@ namespace TilemapLayer
             var position = _tilemap.CellToWorld(baseCoords) + new Vector3(1 / 2f, 1 / 2f);
             var player = Instantiate( prefab, position, Quaternion.identity);
             var unit = new UnitModel(_tilemap, unitData, player ,baseCoords, position);
-            _unit.Add(baseCoords, unit);
+            _units.Add(baseCoords, unit);
             // var playerController = player.transform.GetComponent<UnitController>();
             // playerController.Initialize(unit);
             return unit;
@@ -50,7 +50,7 @@ namespace TilemapLayer
         public bool IsEmpty(Vector3 worldCoords)
         {
             Vector3Int baseCoords = _tilemap.WorldToCell(worldCoords);
-            if (_unit.ContainsKey(baseCoords))
+            if (_units.ContainsKey(baseCoords))
             {
                 return false;
             }
@@ -61,14 +61,27 @@ namespace TilemapLayer
         public UnitModel GetUnit(Vector3 worldCoords)
         {
             Vector3Int baseCoords = _tilemap.WorldToCell(worldCoords);
-            _unit.TryGetValue(baseCoords, out var data);
+            _units.TryGetValue(baseCoords, out var data);
             return data;
 
+        }
+
+        public List<UnitModel> GetUnits(UnitSide side)
+        {
+            var list = new List<UnitModel>();
+            foreach (var unit in _units)
+            {
+                if (unit.Value.UnitData.UnitSide == side)
+                {
+                    list.Add(unit.Value);
+                }
+            }
+            return list;
         }
         public void RemoveUnit(UnitModel buildable)
         {
             _colliderTilemap.DestroyCollider(buildable.Coordinates);
-            _unit.Remove(buildable.Coordinates);
+            _units.Remove(buildable.Coordinates);
             if (buildable.GameObject != null)
                 Destroy(buildable.GameObject);
         }

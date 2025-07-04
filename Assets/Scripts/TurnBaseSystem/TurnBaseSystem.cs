@@ -240,7 +240,7 @@ public class TurnBaseSystem : MonoBehaviour
         UIManagerBattle.HideUnitAction();
         SetActiveUnit(null);
     }
-    private void PerformAttack() {
+    public void PerformAttack() {
         var origin = ActiveUnit.Coordinates;
         var data   = ActiveUnit.UnitData;
         var offsets = UnitAttackCalculate.GetOffsets(
@@ -251,6 +251,7 @@ public class TurnBaseSystem : MonoBehaviour
             var cell = origin + off;
             Vector3 world = _battleBoard.CellToWorld(cell) + new Vector3(0.5f, 0.5f);
             var target = _battleBoard.GetUnit(world);
+            UIManagerBattle.StartVFXExplosive(world);
                 // && target.UnitData.UnitSide != data.UnitSide
             if (target != null ) {
                 Debug.Log(target.UnitData.Name);
@@ -262,5 +263,33 @@ public class TurnBaseSystem : MonoBehaviour
     {
         HidePlayerAttack();
     }
- 
+
+    public List<UnitModel> GetUnitsBySide(UnitSide side)
+    {
+         return _battleBoard.GetUnits(side);
+    }
+
+    public void MoveEnemy(UnitModel enemy, Vector3 worldPosition)
+    {
+         /* mirip OnMovePerformed tapi untuk enemy */
+         var newUnit = _battleBoard.Build(worldPosition, enemy.UnitData.UnitPrefab, enemy.UnitData);
+         _battleBoard.RemoveUnit(enemy);
+         _activeUnit = newUnit;
+         HidePlayerMove();
+         StopPreview();
+         _confirmMove = false;
+         _uIManagerBattle.UnitController.SetAlreadyMove(true);
+         UIManagerBattle.ShowUnitAction(newUnit, _pendingMove);
+    }
+
+    public bool IsInAttackRange(UnitModel attacker, UnitModel target)
+    {
+         /* cek jarak dengan _battleArea.IsValidAttackCell */
+         return true;
+    }
+
+    public Vector3 CellToWorld(Vector3Int baseCoord)
+    {
+        return _battleBoard.CellToWorld(baseCoord);
+    }
 }
