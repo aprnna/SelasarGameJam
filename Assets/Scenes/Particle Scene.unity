@@ -268,6 +268,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Explode Effect
       objectReference: {fileID: 0}
+    - target: {fileID: 4483419489385294534, guid: 6aee535f004834341859d6593363e45d, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4483419489385294534, guid: 6aee535f004834341859d6593363e45d, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5504747631128740018, guid: 6aee535f004834341859d6593363e45d, type: 3}
+      propertyPath: EmissionModule.m_Bursts.Array.data[0].countCurve.scalar
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 8551299065751087879, guid: 6aee535f004834341859d6593363e45d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.64
