@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Turnbase_System
 {
     public class GameEndState:BattleState
@@ -8,17 +10,15 @@ namespace Turnbase_System
         }
         public override void OnEnter()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("GAMEEE ENDDD "+ TurnBaseSystem.BattleResult);
         }
 
         public override void OnUpdate()
         {
-            throw new System.NotImplementedException();
         }
 
         public override void OnExit()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

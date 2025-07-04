@@ -150,6 +150,20 @@ namespace TilemapLayer
             foreach (Transform child in _attackHighlightContainer.transform)
                 Destroy(child.gameObject);
         }
-        
+        public List<Vector3Int> GetValidMoveCells()
+        {
+            return new List<Vector3Int>(_validMoveCells);
+        }
+
+        public List<Vector3> GetValidMoveWorldPositions()
+        {
+            var worlds = new List<Vector3>();
+            foreach (var cell in _validMoveCells)
+            {
+                // GetCellCenterWorld agar diposisikan di tengah tile
+                worlds.Add(_tilemap.GetCellCenterWorld(cell));
+            }
+            return worlds;
+        }
     }
 }

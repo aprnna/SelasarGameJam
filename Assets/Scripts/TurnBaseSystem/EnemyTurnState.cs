@@ -1,106 +1,305 @@
-using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Player;
 using TilemapLayer;
-using Unity.Mathematics;
 using UnityEngine;
 
 namespace Turnbase_System
 {
     public class EnemyTurnState:BattleState
-    {
-     public EnemyTurnState(TurnBaseSystem tbs) : base(tbs) { }
+    { 
+        public EnemyTurnState(TurnBaseSystem tbs) : base(tbs) { }
 
         public override void OnEnter()
         {
-            // Mulai rutinitas giliran lawan
-            ExecuteEnemyTurnAsync().Forget();
+            ExecuteSingleEnemyAction().Forget();
         }
 
-        public override void OnUpdate()
-        {
-            // Tidak perlu update rutin per-frame di state ini
-        }
+        public override void OnUpdate() { }
 
         public override void OnExit()
         {
-            // Bersihkan highlight atau preview jika masih ada
-            TurnBaseSystem.Instance.HidePlayerMove();
-            TurnBaseSystem.Instance.HidePlayerAttack();
+            TurnBaseSystem.HidePlayerMove();
+            TurnBaseSystem.HidePlayerAttack();
         }
 
-        private async UniTaskVoid ExecuteEnemyTurnAsync()
+        private async UniTaskVoid ExecuteSingleEnemyAction3()
         {
-            var tbs = TurnBaseSystem.Instance;
+             var tbs     = TurnBaseSystem.Instance;
+            var enemies = tbs.GetAliveUnitsBySide(UnitSide.Enemy);
+            var players = tbs.GetAliveUnitsBySide(UnitSide.Player);
 
-            // Ambil semua unit enemy dari board
-            var enemyUnits = tbs.GetUnitsBySide(UnitSide.Enemy);
-            var playerUnits = tbs.GetUnitsBySide(UnitSide.Player);
-
-            foreach (var enemy in enemyUnits)
+            if (enemies.Count == 0 || players.Count == 0)
             {
-                // Set aktif
-                tbs.SetActiveUnit(enemy);
+                tbs.BattleState.ChangeState(tbs.PlayerTurnState);
+                return;
+            }
 
-                // 1) Tampilkan area gerak
-                tbs.ShowPlayerMove(enemy);
-                await UniTask.Delay(500);
-
-                // 2) Pilih target terdekat
-                UnitModel target = FindClosest(enemy, playerUnits);
-                if (target != null)
+            // Pilih enemy terdekat ke salah satu player
+            UnitModel enemy = null, target = null;
+            int bestDist = int.MaxValue;
+            foreach (var e in enemies)
+                foreach (var p in players)
                 {
-                    // 3) Hitung path sederhana: ambil satu langkah mendekat
-                    Vector3Int step = GetStepTowards(enemy.Coordinates, target.Coordinates);
-                    Vector3 worldStep = tbs.CellToWorld(step) + new Vector3(0.5f, 0.5f);
-
-                    // 4) Pindah unit
-                    tbs.HidePlayerMove();
-                    tbs.MoveEnemy(enemy, worldStep);
-                    await UniTask.Delay(500);
-
-                    // 5) Jika dalam jangkauan serang, lakukan serang
-                    if (tbs.IsInAttackRange(enemy, target))
+                    if (e.IsDead || p.IsDead) continue;
+                    int d = Mathf.Abs(p.Coordinates.x - e.Coordinates.x)
+                          + Mathf.Abs(p.Coordinates.y - e.Coordinates.y);
+                    if (d < bestDist)
                     {
-                        tbs.ShowPlayerAttack(enemy);
-                        tbs.PerformAttack();
-                        await UniTask.Delay(500);
-                        tbs.HidePlayerAttack();
+                        bestDist = d;
+                        enemy = e;
+                        target = p;
                     }
                 }
 
-                // Tunggu sejenak sebelum giliran unit berikutnya
-                await UniTask.Delay(300);
+            if (enemy == null || target == null)
+            {
+                tbs.BattleState.ChangeState(tbs.PlayerTurnState);
+                return;
             }
 
-            // Selesai semua enemy, lanjutkan ke giliran player
-            tbs.BattleState.ChangeState(tbs.PlayerTurnState);
-        }
+            tbs.SetActiveUnit(enemy);
+            bool inRange = tbs.IsInAttackRange(enemy, target);
 
-        private UnitModel FindClosest(UnitModel self, List<UnitModel> others)
-        {
-            UnitModel best = null;
-            int minDist = int.MaxValue;
-            foreach (var u in others)
+            if (!inRange)
             {
-                int d = math.abs(u.Coordinates.x - self.Coordinates.x)
-                      + math.abs(u.Coordinates.y - self.Coordinates.y);
-                if (d < minDist)
+                tbs.ShowPlayerMove(enemy);
+                await UniTask.Delay(200);
+
+                // Hitung sel langkah
+                var stepCell = GetStepTowards(enemy.Coordinates, target.Coordinates);
+                var worldPos = tbs.CellToWorld(stepCell) + new Vector3(0.5f, 0.5f);
+
+                // Cek apakah tile kosong (tidak ada unit)
+                if (tbs.GetUnit(worldPos) == null)
                 {
-                    minDist = d;
-                    best = u;
+                    tbs.MoveEnemy(enemy, worldPos);
+                    await UniTask.Delay(300);
+                    // update reference setelah move
+                    enemy = tbs.ActiveUnit;
+                }
+                // hilangkan highlight move
+                tbs.HidePlayerMove();
+            }
+
+            // cek lagi apakah dalam range setelah kemungkinan move
+            if (tbs.IsInAttackRange(enemy, target))
+            {
+                tbs.ShowPlayerAttack(enemy);
+                await UniTask.Delay(200);
+                tbs.PerformAttack();
+                await UniTask.Delay(300);
+                tbs.HidePlayerAttack();
+            }
+
+            tbs.BattleState.ChangeState(tbs.PlayerTurnState);
+
+        }
+        
+
+        private async UniTaskVoid ExecuteSingleEnemyAction2()
+        {
+            var tbs     = TurnBaseSystem.Instance;
+            var enemies = tbs.GetAliveUnitsBySide(UnitSide.Enemy);
+            var players = tbs.GetAliveUnitsBySide(UnitSide.Player);
+
+            UnitModel enemy = null, target = null;
+            int bestDist = int.MaxValue;
+            foreach (var e in enemies)
+            foreach (var p in players)
+            {
+                if (e.IsDead || p.IsDead) continue;
+                int d = Mathf.Abs(p.Coordinates.x - e.Coordinates.x)
+                        + Mathf.Abs(p.Coordinates.y - e.Coordinates.y);
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    enemy = e;
+                    target = p;
                 }
             }
-            return best;
+
+
+            tbs.SetActiveUnit(enemy);
+
+            // Hitung offsets attack
+            var offsets = UnitAttackCalculate.GetOffsets(
+                enemy.UnitData.AttackPattern,
+                enemy.UnitData.Range,
+                enemy.UnitData.Direction
+            );
+
+            // Cek apakah bisa langsung menyerang
+            bool canAttack = offsets.Any(off => enemy.Coordinates + off == target.Coordinates);
+
+            // Jika belum bisa attack, pilih tile terdekat DI ANTARA semua move‐tiles
+            if (!canAttack)
+            {
+                // Tampilkan highlight (bukan wajib, tapi berguna untuk debug)
+                tbs.ShowPlayerMove(enemy);
+                await UniTask.Delay(100);
+
+                // Ambil semua posisi world yang boleh dipijak
+                var moves = tbs.GetAvailableMoveWorldPositions(enemy);
+
+                // Hide kembali highlight
+                tbs.HidePlayerMove();
+
+                // Pilih yang paling dekat ke salah satu cell offset (agar attack pattern tercapai)
+                Vector3Int desiredAttackCell = offsets
+                    .Select(off => enemy.Coordinates + off)
+                    .OrderBy(cell => Mathf.Abs(cell.x - target.Coordinates.x) + Mathf.Abs(cell.y - target.Coordinates.y))
+                    .First();
+                
+                // Dari moves, pilih satu yang meminimalkan jarak ke desiredAttackCell
+                Vector3 bestWorld = moves
+                    .OrderBy(w => {
+                        var c = tbs.WorldToCell(w);
+                        return Mathf.Abs(c.x - desiredAttackCell.x) + Mathf.Abs(c.y - desiredAttackCell.y);
+                    })
+                    .FirstOrDefault();
+
+                // Pindah jika ada
+                if (bestWorld != default)
+                {
+                    tbs.ShowPlayerMove(enemy);
+                    await UniTask.Delay(100);
+                    tbs.MoveEnemy(enemy, bestWorld);
+                    await UniTask.Delay(200);
+                    tbs.HidePlayerMove();
+
+                    enemy = tbs.ActiveUnit; // update referensi setelah move
+                }
+            }
+
+            // Setelah move (atau jika sudah bisa attack), lakukan attack satu kali
+            foreach (var off in offsets)
+            {
+                if (enemy.Coordinates + off == target.Coordinates)
+                {
+                    tbs.ShowPlayerAttack(enemy);
+                    await UniTask.Delay(150);
+                    tbs.PerformAttack();
+                    await UniTask.Delay(200);
+                    tbs.HidePlayerAttack();
+                    break;
+                }
+            }
+
+            // Giliran selesai
+            tbs.BattleState.ChangeState(tbs.PlayerTurnState);
         }
+        private async UniTaskVoid ExecuteSingleEnemyAction()
+        {
+            var tbs     = TurnBaseSystem;
+            var enemies = tbs.GetAliveUnitsBySide(UnitSide.Enemy);
+            var players = tbs.GetAliveUnitsBySide(UnitSide.Player);
+            Debug.Log("ENEMIES " + enemies.Count + "PLAYER "+ players.Count);
+            // Pilih enemy dan target terdekat
+            UnitModel enemy = null, target = null;
+            int bestDist = int.MaxValue;
+            foreach (var e in enemies)
+                foreach (var p in players)
+                {
+                    if (e.IsDead || p.IsDead) continue;
+                    int d = Mathf.Abs(p.Coordinates.x - e.Coordinates.x)
+                          + Mathf.Abs(p.Coordinates.y - e.Coordinates.y);
+                    if (d < bestDist)
+                    {
+                        bestDist = d;
+                        enemy = e;
+                        target = p;
+                    }
+                }
+
+            if (enemy == null || target == null)
+            {
+                tbs.BattleState.ChangeState(tbs.PlayerTurnState);
+                return;
+            }
+
+            tbs.SetActiveUnit(enemy);
+
+            // Ambil semua attack offsets
+            var offsets = UnitAttackCalculate.GetOffsets(
+                enemy.UnitData.AttackPattern,
+                enemy.UnitData.Range,
+                enemy.UnitData.Direction
+            );
+
+            // Cek jarak dan kemampuan attack saat ini
+            int manh = Mathf.Abs(enemy.Coordinates.x - target.Coordinates.x)
+                      + Mathf.Abs(enemy.Coordinates.y - target.Coordinates.y);
+            bool adjacent    = (manh == 1);
+            bool canAttackNow = offsets.Any(off => enemy.Coordinates + off == target.Coordinates);
+
+            // Jika berdampingan tapi belum attackable, lakukan sirkulasi 1 langkah
+            if (adjacent && !canAttackNow)
+            {
+                tbs.ShowPlayerMove(enemy);
+                await UniTask.Delay(200);
+                // coba tiap offset: pindah ke posisi berlawanan offset
+                foreach (var off in offsets)
+                {
+                    var cirCell = target.Coordinates - off;
+                    var worldCir = tbs.CellToWorld(cirCell) + new Vector3(0.5f, 0.5f);
+                    if (tbs.GetUnit(worldCir) == null)
+                    {
+                        tbs.MoveEnemy(enemy, worldCir);
+                        await UniTask.Delay(300);
+                        enemy = tbs.ActiveUnit;
+                        break;
+                    }
+                }
+                tbs.HidePlayerMove();
+            }
+            else if (!canAttackNow)
+            {
+                // satu langkah mendekat biasa
+                tbs.ShowPlayerMove(enemy);
+                await UniTask.Delay(200);
+                var step      = GetStepTowards(enemy.Coordinates, target.Coordinates);
+                var worldStep = tbs.CellToWorld(step) + new Vector3(0.5f, 0.5f);
+                if (tbs.GetUnit(worldStep) == null)
+                {
+                    tbs.MoveEnemy(enemy, worldStep);
+                    await UniTask.Delay(300);
+                }
+                tbs.HidePlayerMove();
+                enemy = tbs.ActiveUnit;
+            }
+
+            // Lakukan attack sekali jika sudah dalam offsets
+            if (!canAttackNow) // kalau sudah bisa di awal, skip ke bawah
+            {
+                foreach (var off in offsets)
+                {
+                    if (enemy.Coordinates + off == target.Coordinates)
+                    {
+                        tbs.ShowPlayerAttack(enemy);
+                        await UniTask.Delay(200);
+                        tbs.PerformAttack();
+                        await UniTask.Delay(300);
+                        tbs.HidePlayerAttack();
+                        break;
+                    }
+                }
+            }
+            if(tbs.GetAliveUnitsBySide(UnitSide.Player).Count > 0) tbs.BattleState.ChangeState(tbs.PlayerTurnState);
+            else
+            {
+                tbs.SetBattleResult(BattleResult.EnemyWin);
+                tbs.BattleState.ChangeState(tbs.GameEndState);
+            }
+        }
+
 
         private Vector3Int GetStepTowards(Vector3Int from, Vector3Int to)
         {
             var dir = to - from;
-            if (math.abs(dir.x) > math.abs(dir.y))
-                return from + new Vector3Int(math.sign(dir.x), 0, 0);
-            else
-                return from + new Vector3Int(0, math.sign(dir.y), 0);
+            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
+                return from + new Vector3Int((int)Mathf.Sign(dir.x), 0, 0);
+            return from + new Vector3Int(0, (int)Mathf.Sign(dir.y), 0);
         }
     }
 }

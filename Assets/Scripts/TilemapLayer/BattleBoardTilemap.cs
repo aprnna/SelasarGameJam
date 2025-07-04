@@ -28,9 +28,9 @@ namespace TilemapLayer
             var position = _tilemap.CellToWorld(baseCoords) + new Vector3(1 / 2f, 1 / 2f);
             var player = Instantiate( prefab, position, Quaternion.identity);
             var unit = new UnitModel(_tilemap, unitData, player ,baseCoords, position);
+            var unitController = player.GetComponent<UnitController>();
+            unitController.InitializeUnit(unit);
             _units.Add(baseCoords, unit);
-            // var playerController = player.transform.GetComponent<UnitController>();
-            // playerController.Initialize(unit);
             return unit;
         }
         public SortedDictionary<int, Vector3> GetSpawnLoc(UnitSide side)
@@ -66,14 +66,21 @@ namespace TilemapLayer
 
         }
 
-        public List<UnitModel> GetUnits(UnitSide side)
+        public List<UnitModel> GetUnits(UnitSide side, bool life)
         {
             var list = new List<UnitModel>();
             foreach (var unit in _units)
             {
-                if (unit.Value.UnitData.UnitSide == side)
+                if (unit.Value.UnitData.UnitSide == side )
                 {
-                    list.Add(unit.Value);
+                    if (life && !unit.Value.IsDead)
+                    {
+                        list.Add(unit.Value);
+                    }
+                    if(!life)
+                    {
+                        list.Add(unit.Value);
+                    }
                 }
             }
             return list;
@@ -89,6 +96,10 @@ namespace TilemapLayer
         public Vector3 CellToWorld(Vector3Int baseCoords)
         {
             return _tilemap.CellToWorld(baseCoords);
+        }
+        public Vector3Int WorldToCell(Vector3 worldCoords)
+        {
+            return _tilemap.WorldToCell(worldCoords);
         }
     }
 }

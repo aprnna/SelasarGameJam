@@ -5058,8 +5058,8 @@ MonoBehaviour:
   _battleBoard: {fileID: 526302667}
   _previewTilemap: {fileID: 526302668}
   _enemies:
-  - {fileID: 11400000, guid: 47da3243e4b924e4eb47d2e395ec00a1, type: 2}
-  - {fileID: 11400000, guid: e2da554395f49ab4fa1901e0990bc89f, type: 2}
+  - {fileID: 11400000, guid: e13b68906df8e4d459de3f0f9683e3b4, type: 2}
+  - {fileID: 11400000, guid: 0f62647aa5d635d4e84712e9dc3d497e, type: 2}
   - {fileID: 11400000, guid: 0f62647aa5d635d4e84712e9dc3d497e, type: 2}
   - {fileID: 11400000, guid: 2a9fe5031b57eec4fb7ba3991ea69397, type: 2}
 --- !u!4 &1325011101

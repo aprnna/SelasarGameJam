@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5221617352871949891}
   - component: {fileID: 8707756581665389205}
   - component: {fileID: 5728422264459007664}
+  - component: {fileID: 3314741010141719601}
   m_Layer: 0
   m_Name: B3 Player
   m_TagString: Untagged
@@ -110,3 +111,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3314741010141719601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6165548294382715860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c0cde1a5d9f4618a2f14c512ee70f7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

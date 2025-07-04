@@ -10,6 +10,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
+public enum BattleResult
+{
+    PlayerWin,
+    EnemyWin
+}
+
 public class TurnBaseSystem : MonoBehaviour
 {
     public static TurnBaseSystem Instance;
@@ -31,6 +37,7 @@ public class TurnBaseSystem : MonoBehaviour
     public SelectCardState SelectCardState { get; private set; }
     public EnemyTurnState EnemyTurnState { get; private set; }
     public GameEndState GameEndState { get; private set; }
+    public BattleResult BattleResult { get; private set; }
     private UnitModel _activeUnit;
     private CancellationTokenSource _cts;
     private CancellationToken _cancellationToken;
@@ -67,6 +74,10 @@ public class TurnBaseSystem : MonoBehaviour
         InputManager.Instance.PlayerInput.Performed.OnDown -= OnLeftMouseClicked;
     }
 
+    public void SetBattleResult(BattleResult result)
+    {
+        BattleResult = result;
+    }
     public void OnSelectPlayerCard(UnitData unitData)
     {
         Debug.Log(_players.Count+1);
@@ -200,8 +211,9 @@ public class TurnBaseSystem : MonoBehaviour
         if (BattleState.CurrentState != PlayerTurnState) return;
         var worldPosition = _mainCamera.ScreenToWorldPoint(_mousePos);
         UnitModel item = _battleBoard.GetUnit(worldPosition);
+        var isPlayer = item?.UnitData.UnitSide == UnitSide.Player;
         var unitController = _uIManagerBattle.UnitController;
-        if (item != null && !unitController.AlreadyMove && !unitController.OnMoveUnit)
+        if (isPlayer && !unitController.AlreadyMove && !unitController.OnMoveUnit)
         {
             _uIManagerBattle.ShowUnitAction(item, item.WorldCoords);
         }
@@ -239,11 +251,13 @@ public class TurnBaseSystem : MonoBehaviour
         HidePlayerAttack();
         UIManagerBattle.HideUnitAction();
         SetActiveUnit(null);
+        CheckEnemies();
     }
     public void PerformAttack() {
-        var origin = ActiveUnit.Coordinates;
-        var data   = ActiveUnit.UnitData;
-        var offsets = UnitAttackCalculate.GetOffsets(
+        var attacker = ActiveUnit;
+        var origin   = attacker.Coordinates;
+        var data     = attacker.UnitData;
+        var offsets  = UnitAttackCalculate.GetOffsets(
             data.AttackPattern, data.Range, data.Direction
         );
 
@@ -252,11 +266,16 @@ public class TurnBaseSystem : MonoBehaviour
             Vector3 world = _battleBoard.CellToWorld(cell) + new Vector3(0.5f, 0.5f);
             var target = _battleBoard.GetUnit(world);
             UIManagerBattle.StartVFXExplosive(world);
-                // && target.UnitData.UnitSide != data.UnitSide
-            if (target != null ) {
+            if (target != null )
+            {
+                target.ChangeStatus(true);
+                target.UnitController.PlayDeadAnim();
                 Debug.Log(target.UnitData.Name);
             }
         }
+        // attacker juga mati setelah menyerang
+        attacker.ChangeStatus(true);
+        _battleBoard.RemoveUnit(attacker);
     }
 
     public void OnAttackCanceled()
@@ -264,32 +283,70 @@ public class TurnBaseSystem : MonoBehaviour
         HidePlayerAttack();
     }
 
-    public List<UnitModel> GetUnitsBySide(UnitSide side)
+    public void OnStayPerformed()
     {
-         return _battleBoard.GetUnits(side);
+        SetActiveUnit(null);
+        UIManagerBattle.UnitController.SetAlreadyMove(false);
+        BattleState.ChangeState(EnemyTurnState);
+    }
+    public List<UnitModel> GetAliveUnitsBySide(UnitSide side)
+    {
+         return _battleBoard.GetUnits(side, true);
     }
 
     public void MoveEnemy(UnitModel enemy, Vector3 worldPosition)
     {
-         /* mirip OnMovePerformed tapi untuk enemy */
          var newUnit = _battleBoard.Build(worldPosition, enemy.UnitData.UnitPrefab, enemy.UnitData);
          _battleBoard.RemoveUnit(enemy);
          _activeUnit = newUnit;
-         HidePlayerMove();
-         StopPreview();
-         _confirmMove = false;
-         _uIManagerBattle.UnitController.SetAlreadyMove(true);
-         UIManagerBattle.ShowUnitAction(newUnit, _pendingMove);
     }
 
+    public void CheckEnemies()
+    {
+        var enemies = GetAliveUnitsBySide(UnitSide.Enemy);
+        var players = GetAliveUnitsBySide(UnitSide.Player);
+        if (players.Count == 0)
+        {
+            SetBattleResult(BattleResult.EnemyWin);
+            BattleState.ChangeState(GameEndState);
+        }
+        if(enemies.Count > 0)  BattleState.ChangeState(EnemyTurnState);
+        else
+        {
+            SetBattleResult(BattleResult.PlayerWin);
+            BattleState.ChangeState(GameEndState);
+        }
+    }
     public bool IsInAttackRange(UnitModel attacker, UnitModel target)
     {
-         /* cek jarak dengan _battleArea.IsValidAttackCell */
-         return true;
+        var data    = attacker.UnitData;
+        var offsets = UnitAttackCalculate.GetOffsets(
+            data.AttackPattern, data.Range, data.Direction
+        );
+        foreach (var off in offsets)
+        {
+            if (attacker.Coordinates + off == target.Coordinates)
+                return true;
+        }
+        return false;
     }
 
     public Vector3 CellToWorld(Vector3Int baseCoord)
     {
         return _battleBoard.CellToWorld(baseCoord);
     }
+    public UnitModel GetUnit(Vector3 worldPosition)
+    {
+        return _battleBoard.GetUnit(worldPosition);
+    }
+    public List<Vector3> GetAvailableMoveWorldPositions(UnitModel unit)
+    {
+        _battleArea.ShowMoveTile(unit);
+        var worldPositions = _battleArea.GetValidMoveWorldPositions();
+        _battleArea.HideMoveTile();
+        return worldPositions;
+    }
+    public Vector3Int WorldToCell(Vector3 world)
+        => _battleBoard.WorldToCell(world);
+
 }

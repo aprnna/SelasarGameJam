@@ -13,6 +13,7 @@ namespace TilemapLayer
         public Vector3Int Coordinates { get; private set; }
         public UnitController UnitController { get; private set; }
         public Vector3 WorldCoords { get; private set; }
+        public bool IsDead { get; private set; }
         public UnitModel(Tilemap parentTilemap, UnitData unitData, GameObject unitObject, Vector3Int coords, Vector3 worldCoords)
         {
             ParentTilemap = parentTilemap;
@@ -21,6 +22,12 @@ namespace TilemapLayer
             Coordinates = coords;
             WorldCoords = worldCoords;
             UnitController = unitObject.GetComponent<UnitController>();
+            IsDead = false;
+        }
+
+        public void ChangeStatus(bool value)
+        {
+            IsDead = value;
         }
 
     }

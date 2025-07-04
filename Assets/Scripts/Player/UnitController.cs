@@ -1,4 +1,3 @@
-using System;
 using TilemapLayer;
 using UnityEngine;
 
@@ -8,19 +7,25 @@ namespace Player
     {
         private UnitModel _unitModel;
         private TurnBaseSystem _turnBaseSystem;
+        private Animator _animator;
         private void Start()
         {
             _turnBaseSystem = TurnBaseSystem.Instance;
+            _animator = GetComponent<Animator>();
         }
 
-        public void Initialize(UnitModel unitModel)
+        public void InitializeUnit(UnitModel unitModel)
         {
             _unitModel = unitModel;
-            var sprite = GetComponent<SpriteRenderer>();
-            // sprite.sprite = unitModel.UnitData.UnitSprite;
+        }
+        public void PlayAttackAnim()
+        {
+            _animator.SetTrigger("Attack");
         }
 
-   
+        public void PlayDeadAnim()
+        {
+            _animator.SetTrigger("Dead");
+        }
     }
-
 }

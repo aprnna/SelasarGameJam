@@ -60,8 +60,7 @@ namespace Player
             // Debug.Log("Stay Action " + _unitModel.UnitData.Name);
             HidePopUp();
             _unitPopUpController.HidePopUp();
-            _turnBaseSystem.UIManagerBattle.UnitController.SetAlreadyMove(false);
-            _turnBaseSystem.SetActiveUnit(null);
+            _turnBaseSystem.OnStayPerformed();
         }
 
         private void OnAttackAction()
