@@ -5040,7 +5040,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerCards: {fileID: 1639263963}
   _unitPopUpController: {fileID: 1449730627}
-  _explosivePS: {fileID: 725748389856807714, guid: 36742268267b0ee43999978db383f2a2, type: 3}
+  _explosivePS: {fileID: 5539242500411027855, guid: 81e5043278c5b50489484e2761f3b062, type: 3}
 --- !u!114 &1325011100
 MonoBehaviour:
   m_ObjectHideFlags: 0
