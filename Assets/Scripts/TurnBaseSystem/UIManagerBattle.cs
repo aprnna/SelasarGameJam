@@ -15,6 +15,9 @@ namespace Turnbase_System
         [SerializeField] private GameAnnouncement _gameAnnouncement;
         [SerializeField] private GameObject _victoryPanel;
         [SerializeField] private GameObject _losePanel;
+        // [SerializeField] private Canvas _mainCanvas;
+
+        // public Canvas MainCanvas => _mainCanvas;
         private CardManager _cardManager;
 
         public UnitPopUpController UnitController => _unitPopUpController;

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using Manager;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class RecruitCard : MonoBehaviour
@@ -128,6 +130,7 @@ public class RecruitCard : MonoBehaviour
                         {
                             Debug.Log(item);
                             CardManager.Instance.AddCard(item);
+                            SceneController.Instance.NextStage(SceneManager.GetActiveScene().name);
                         }
                         onComplete?.Invoke();
                     });

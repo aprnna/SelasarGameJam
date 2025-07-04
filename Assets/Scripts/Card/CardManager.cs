@@ -14,7 +14,6 @@ public class CardManager : PersistentSingleton<CardManager>
     public CardUI _cardPrefab;
     public ChooseCard _chooseCardPrefab;
     public RecruitCard _recruitCardPrefab;
-    public Canvas canvas;
 
     private ChooseCard _chooseCard;
     private RecruitCard _recruitCard;
@@ -22,6 +21,7 @@ public class CardManager : PersistentSingleton<CardManager>
     void Start()
     {
         _playerCard.AddRange(_starterCard);
+        var canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
     }
 
     public void AddCard(CardSO card)
@@ -69,6 +69,7 @@ public class CardManager : PersistentSingleton<CardManager>
 
     public void SpawnChooseCard()
     {
+        var canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         _chooseCard = Instantiate(_chooseCardPrefab, canvas.transform);
     }
 
@@ -82,6 +83,7 @@ public class CardManager : PersistentSingleton<CardManager>
 
     public void SpawnRecruitCard()
     {
+        var canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
         _recruitCard = Instantiate(_recruitCardPrefab, canvas.transform);
     }
 

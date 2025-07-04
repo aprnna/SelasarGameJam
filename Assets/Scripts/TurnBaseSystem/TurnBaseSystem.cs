@@ -76,6 +76,7 @@ public class TurnBaseSystem : MonoBehaviour
         if(scene.name == "Stage1") UIManagerBattle.ShowTutorial();
         else
         {
+            BattleState = new FiniteStateMachine<BattleState>(SelectCardState);
             InitializePlayerLoc();
             InitializeEnemy();
         }
@@ -323,6 +324,12 @@ public class TurnBaseSystem : MonoBehaviour
         var players = GetAliveUnitsBySide(UnitSide.Player);
         if (players.Count == 0)
         {
+            if (enemies.Count == 0)
+            {
+                SetBattleResult(BattleResult.PlayerWin);
+                BattleState.ChangeState(GameEndState);
+                return;
+            }
             SetBattleResult(BattleResult.EnemyWin);
             BattleState.ChangeState(GameEndState);
             return;
