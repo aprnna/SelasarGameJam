@@ -9,6 +9,7 @@ namespace Turnbase_System
     {
         [SerializeField] private GameObject _playerCards;
         [SerializeField] private UnitPopUpController _unitPopUpController;
+        [SerializeField] private GameObject _explosivePS;
         public UnitPopUpController UnitController => _unitPopUpController;
         public void ShowPlayerCards()
         {
@@ -31,7 +32,11 @@ namespace Turnbase_System
         public void ShowConfirmMove()
         {
             _unitPopUpController.ShowConfirmMovePanel();
+        }
 
+        public void StartVFXExplosive(Vector3 position)
+        {
+            Instantiate(_explosivePS, position, Quaternion.identity);
         }
     }
 }
