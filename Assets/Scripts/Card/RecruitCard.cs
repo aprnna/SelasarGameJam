@@ -1,16 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ChooseCard : MonoBehaviour
+public class RecruitCard : MonoBehaviour
 {
     [SerializeField]
     private List<Vector2> _selectedCardPosition;
 
     [SerializeField]
-    private Vector2 _bottomPanelTargetPos;
+    private List<CardSO> _recruitCardOption;
+
+    public CardUI _cardPrefab;
+
+    [SerializeField]
+    private Vector2 _centerPanelTargetPos;
 
     private Dictionary<Vector2, bool> _selectedCardPositionValue = new Dictionary<Vector2, bool>();
 
@@ -29,20 +35,30 @@ public class ChooseCard : MonoBehaviour
             _selectedCardPositionValue.Add(_selectedCardPosition[i], false);
         }
 
-        CardManager.Instance.SpawnCard(_bottomPanel);
+        Dictionary<CardType, int> cardCounts = CardManager.Instance.GetPlayerCardData();
+        var validCards = _recruitCardOption
+            .Where(card => !cardCounts.ContainsKey(card.cardType) || cardCounts[card.cardType] < 2)
+            .ToList();
 
-        _bottomPanel
-            .DOAnchorPosX(_bottomPanelTargetPos.x, 0.4f)
-            .SetEase(Ease.OutBack)
+        for (var i = 0; i < 4; i++)
+        {
+            CardUI spawnCard = Instantiate(_cardPrefab, _centerPanel);
+            spawnCard.transform.localScale = Vector3.one * 3;
+            spawnCard.SetRecruitCard();
+            spawnCard.cardSO = validCards[UnityEngine.Random.Range(0, validCards.Count)];
+        }
+
+        _centerPanel
+            .DOAnchorPosX(_centerPanelTargetPos.x, 0.4f)
             .OnComplete(() =>
             {
-                foreach (Transform item in _bottomPanel)
+                foreach (Transform item in _centerPanel)
                 {
                     CardUI card = item.GetComponent<CardUI>();
                     card.SetOriginalPosition();
-                    card.SetChooseCard();
+
                     HorizontalLayoutGroup layoutGroup =
-                        _bottomPanel.GetComponent<HorizontalLayoutGroup>();
+                        _centerPanel.GetComponent<HorizontalLayoutGroup>();
                     layoutGroup.enabled = false;
                 }
             });
@@ -71,7 +87,7 @@ public class ChooseCard : MonoBehaviour
 
     public bool IsFull()
     {
-        return _selectedCard.Count == 4;
+        return _selectedCard.Count == 3;
     }
 
     public void AddCard(Vector2 targetPos, CardSO card)
@@ -86,16 +102,21 @@ public class ChooseCard : MonoBehaviour
         _selectedCard.Remove(card);
     }
 
-    public void FinishChooseCard(Action onComplete)
+    public void FinishRecruit(Action onComplete)
     {
-        _bottomPanel
-            .DOAnchorPosX(800, 0.3f)
+        _centerPanel
+            .DOAnchorPosX(-2400, 0.3f)
             .OnComplete(() =>
             {
-                _centerPanel
-                    .DOAnchorPosX(-800, 0.3f)
+                _bottomPanel
+                    .DOAnchorPosX(2000, 0.3f)
                     .OnComplete(() =>
                     {
+                        foreach (CardSO item in _selectedCard)
+                        {
+                            Debug.Log(item);
+                            CardManager.Instance.AddCard(item);
+                        }
                         onComplete?.Invoke();
                     });
             });

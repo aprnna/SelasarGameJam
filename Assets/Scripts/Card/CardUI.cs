@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,11 +25,14 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     public CardSO cardSO;
     private RectTransform _rectTransform;
 
-    // Tambahin pengecekan kalau yang di pilih udah kelebihan
+    private Action<string> onClick;
+    public string id;
+
     void Start()
     {
         // _originalPosition = transform.localPosition;
         _rectTransform = GetComponent<RectTransform>();
+        GetComponent<Image>().sprite = cardSO.cardSprite;
     }
 
     public void SetChooseCard()
@@ -48,9 +52,24 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         _originalPosition = _rectTransform.anchoredPosition;
     }
 
+    public void SetClicked(bool value)
+    {
+        _isClicked = value;
+    }
+
+    public void SetId(string id)
+    {
+        this.id = id;
+    }
+
+    public void OnClick()
+    {
+        onClick?.Invoke(id);
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!_isClicked && !_isMoving && _isChoose)
+        if (!_isClicked && !_isMoving && !_isRecruit)
         {
             _rectTransform.DOAnchorPosY(_originalPosition.y + _hoverHeight, _duration);
         }
@@ -58,7 +77,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!_isClicked && !_isMoving && _isChoose) 
+        if (!_isClicked && !_isMoving && !_isRecruit) 
         {
             _rectTransform.DOAnchorPosY(_originalPosition.y, _duration);
         }
@@ -69,7 +88,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         Sequence seq = DOTween.Sequence();
         _chooseCard.RemoveCard(_rectTransform.anchoredPosition, cardSO);
         transform.SetParent(_chooseCard.GetBottomPanel());
-        seq.Join(_rectTransform.DOScale(0.71f, _duration));
+        seq.Join(_rectTransform.DOScale(2.5f, _duration));
         seq.Join(_rectTransform.DOAnchorPos(_originalPosition, _duration).SetEase(Ease.InOutQuad));
 
         seq.OnComplete(() =>
@@ -84,7 +103,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         Sequence seq = DOTween.Sequence();
         _recruitCard.RemoveCard(_rectTransform.anchoredPosition, cardSO);
         transform.SetParent(_recruitCard.GetCenterPanel());
-        seq.Join(_rectTransform.DOScale(0.71f, _duration));
+        seq.Join(_rectTransform.DOScale(3f, _duration));
         seq.Join(_rectTransform.DOAnchorPos(_originalPosition, _duration).SetEase(Ease.InOutQuad));
 
         seq.OnComplete(() =>
@@ -96,7 +115,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (_isClicked && !_isMoving)
+        if (_isClicked && !_isMoving )
         {
             if (_isChoose)
             {
@@ -143,7 +162,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
                     Sequence seq = DOTween.Sequence();
 
                     transform.SetParent(_chooseCard.GetCenterPanel(), true);
-                    seq.Join(transform.DOScale(1f, _duration));
+                    seq.Join(transform.DOScale(3f, _duration));
                     seq.Join(
                         _rectTransform.DOAnchorPos(targetPos, _duration).SetEase(Ease.InOutQuad)
                     );
@@ -158,7 +177,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         {
             Sequence seq = DOTween.Sequence();
             transform.SetParent(_chooseCard.GetCenterPanel(), true);
-            seq.Join(transform.DOScale(1f, _duration));
+            seq.Join(transform.DOScale(3f, _duration));
             seq.Join(_rectTransform.DOAnchorPos(targetPos, _duration).SetEase(Ease.InOutQuad));
             seq.OnComplete(() =>
             {
@@ -181,7 +200,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
                     Sequence seq = DOTween.Sequence();
 
                     transform.SetParent(_recruitCard.GetBottomPanel(), true);
-                    seq.Join(transform.DOScale(.71f, _duration));
+                    seq.Join(transform.DOScale(2.5f, _duration));
                     seq.Join(
                         _rectTransform.DOAnchorPos(targetPos, _duration).SetEase(Ease.InOutQuad)
                     );
@@ -196,7 +215,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         {
             Sequence seq = DOTween.Sequence();
             transform.SetParent(_recruitCard.GetBottomPanel(), true);
-            seq.Join(transform.DOScale(.71f, _duration));
+            seq.Join(transform.DOScale(2f, _duration));
             seq.Join(_rectTransform.DOAnchorPos(targetPos, _duration).SetEase(Ease.InOutQuad));
             seq.OnComplete(() =>
             {

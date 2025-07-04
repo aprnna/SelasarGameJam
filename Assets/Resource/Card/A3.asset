@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4db930adcaa0c78429b5cb2047da6f01, type: 3}
   m_Name: A3
   m_EditorClassIdentifier: 
-  cardSprite: {fileID: 0}
+  cardSprite: {fileID: 4058025459245269310, guid: b69cbc53a2829b64387eefc853f1cd13, type: 3}
   descripion: 
   cardType: 2

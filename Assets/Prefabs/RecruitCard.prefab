@@ -33,7 +33,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: 0}
+  m_AnchoredPosition: {x: -2000, y: 120}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7834241356872323070
@@ -54,7 +54,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 290
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -113,10 +113,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectedCardPosition:
-  - {x: 200, y: 0}
-  - {x: 100, y: 0}
+  - {x: 300, y: 0}
   - {x: 0, y: 0}
-  - {x: -100, y: 0}
+  - {x: -300, y: 0}
   _recruitCardOption:
   - {fileID: 11400000, guid: c338217df5b1be44591aa910c60e090d, type: 2}
   - {fileID: 11400000, guid: 8db78acf2504a1c4faa9bb851ee83c38, type: 2}
@@ -129,7 +128,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 404dae8d1d8046e4ba4547515aff9042, type: 2}
   - {fileID: 11400000, guid: 611a69e651ff4024f8400581e24ea562, type: 2}
   _cardPrefab: {fileID: 5969575849203548813, guid: 79199dae3925c4b4a801677605a84e58, type: 3}
-  _centerPanelTargetPos: {x: -40, y: 0}
+  _centerPanelTargetPos: {x: -570, y: 0}
   _centerPanel: {fileID: 7010134931441205593}
   _bottomPanel: {fileID: 6195372500763731736}
 --- !u!1 &3385362882725056720
