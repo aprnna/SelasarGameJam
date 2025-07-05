@@ -296,6 +296,7 @@ public class TurnBaseSystem : MonoBehaviour
             }
         }
         // attacker juga mati setelah menyerang
+        attacker.UnitController.PlayAttackAnim();
         attacker.ChangeStatus(true);
         _battleBoard.RemoveUnit(attacker);
     }
