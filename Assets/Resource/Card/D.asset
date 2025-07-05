@@ -15,4 +15,4 @@ MonoBehaviour:
   cardSprite: {fileID: -7474897090206559372, guid: 81721925ff14afe43ab11f1aacc9bc2e, type: 3}
   cardName: Advance Robot
   cardType: 9
-  UnitData: {fileID: 11400000, guid: fc825d0c0da205f4dbf39c11d8d90e73, type: 2}
+  UnitData: {fileID: 11400000, guid: 204cb2e9bdc2d8c469539aac4eab9828, type: 2}

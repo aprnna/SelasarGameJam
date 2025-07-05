@@ -58,6 +58,8 @@ namespace Manager
                     break;
                 case "Stage4": ChangeScene("Stage5");
                     break;
+                case "Stage5": ChangeScene("Credit");
+                    break;
             }
         }
     }
