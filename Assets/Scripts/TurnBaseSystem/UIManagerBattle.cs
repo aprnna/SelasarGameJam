@@ -1,4 +1,5 @@
 using System;
+using Audio;
 using Cysharp.Threading.Tasks;
 using Player;
 using TilemapLayer;
@@ -15,6 +16,7 @@ namespace Turnbase_System
         [SerializeField] private GameAnnouncement _gameAnnouncement;
         [SerializeField] private GameObject _victoryPanel;
         [SerializeField] private GameObject _losePanel;
+        [SerializeField] private AudioTrigger _audioTrigger; 
         // [SerializeField] private Canvas _mainCanvas;
 
         // public Canvas MainCanvas => _mainCanvas;
@@ -66,9 +68,10 @@ namespace Turnbase_System
             _unitPopUpController.ShowConfirmMovePanel();
         }
 
-        public  void StartVFXExplosive(Vector3 position)
+        public void StartVFXExplosive(Vector3 position)
         {
             Instantiate(_explosivePS, position, Quaternion.identity);
+            _audioTrigger.TriggerSound();   
         }
 
         public async UniTask ShowAnnouncement(string message, float stayDuration = 1.2f)

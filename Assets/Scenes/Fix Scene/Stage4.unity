@@ -3173,6 +3173,26 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1
+  - first: {x: 1, y: -1, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 8
+      m_TileSpriteIndex: 1
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 1
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1
+  - first: {x: -2, y: 0, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 8
+      m_TileSpriteIndex: 1
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 1
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1
   - first: {x: -1, y: 0, z: 0}
     second:
       serializedVersion: 2
@@ -3231,11 +3251,13 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 49dbf768d63466343bae97d20b8ba890, type: 2}
   - m_RefCount: 1
     m_Data: {fileID: 11400000, guid: 44c9601b67a929243b116accc6c9d887, type: 2}
+  - m_RefCount: 2
+    m_Data: {fileID: 11400000, guid: 161ce1eb4faf9064896af03d174ba0e7, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 2
+    m_Data: {fileID: 7482667652216324306, guid: 842dcb2ffcdf41943b75d7819e21afea, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 2549289961131151738, guid: d981aef0722a6a84989ebf68fc4842c7, type: 3}
   - m_RefCount: 2
@@ -3245,7 +3267,7 @@ Tilemap:
   - m_RefCount: 2
     m_Data: {fileID: 1444792249100830875, guid: b01d8999f21edaf46bbda67c6257f00d, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 8
+  - m_RefCount: 10
     m_Data:
       e00: 1
       e01: 0
@@ -3266,8 +3288,8 @@ Tilemap:
   m_TileColorArray:
   - m_RefCount: 0
     m_Data: {r: 1.0823e-40, g: 1.0823e-40, b: 1.0823e-40, a: 1.0823e-40}
-  - m_RefCount: 0
-    m_Data: {r: 1.0823e-40, g: 1.0823e-40, b: 1.0823e-40, a: 1.0823e-40}
+  - m_RefCount: 2
+    m_Data: {r: 1, g: 0, b: 0.9559922, a: 0.68235296}
   - m_RefCount: 4
     m_Data: {r: 0, g: 1, b: 0, a: 1}
   - m_RefCount: 4
@@ -5659,6 +5681,7 @@ MonoBehaviour:
   _gameAnnouncement: {fileID: 1159136649}
   _victoryPanel: {fileID: 2069746459}
   _losePanel: {fileID: 273750681}
+  _audioTrigger: {fileID: 0}
 --- !u!114 &1325011100
 MonoBehaviour:
   m_ObjectHideFlags: 0

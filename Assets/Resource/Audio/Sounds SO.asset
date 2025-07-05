@@ -56,7 +56,7 @@ MonoBehaviour:
     volume: 1
     mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
     sounds:
-    - {fileID: 8300000, guid: 439638b886b27e549a95ce1f981e106b, type: 3}
+    - {fileID: 8300000, guid: 79dd152f51fc2594eaae04e6f2a32d9c, type: 3}
   - name: SFX_TileHover
     volume: 1
     mixer: {fileID: 9110725276605010052, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}

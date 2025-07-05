@@ -211,7 +211,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 380374136}
         m_TargetAssemblyTypeName: Audio.AudioSetting, Assembly-CSharp
-        m_MethodName: SetSfxVolume
+        m_MethodName: SetMusicVolume
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -369,7 +369,7 @@ GameObject:
   - component: {fileID: 163964719}
   - component: {fileID: 163964720}
   m_Layer: 5
-  m_Name: MusicSettings
+  m_Name: SFXsettings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -554,6 +554,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+      - m_Target: {fileID: 226721448}
+        m_TargetAssemblyTypeName: Audio.AudioTrigger, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &226721446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -701,6 +713,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 272951337}
+        m_TargetAssemblyTypeName: Audio.AudioTrigger, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &272951335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -778,12 +802,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 372534729}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1297118741}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &372534731
 MonoBehaviour:
@@ -949,8 +973,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _myMixer: {fileID: 24100000, guid: c84ee9ba250dfaa49926bf3e373c0658, type: 2}
-  _musicSlider: {fileID: 713742302}
-  _sfxSlider: {fileID: 46561937}
+  _musicSlider: {fileID: 46561937}
+  _sfxSlider: {fileID: 713742302}
 --- !u!114 &380374137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1408,7 +1432,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 380374136}
         m_TargetAssemblyTypeName: Audio.AudioSetting, Assembly-CSharp
-        m_MethodName: SetMusicVolume
+        m_MethodName: SetSfxVolume
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2248,6 +2272,18 @@ MonoBehaviour:
           m_StringArgument: Stage1
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1146822930}
+        m_TargetAssemblyTypeName: Audio.AudioTrigger, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1146822928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2525,7 +2561,7 @@ GameObject:
   - component: {fileID: 1286187767}
   - component: {fileID: 1286187768}
   m_Layer: 5
-  m_Name: SFXSettings
+  m_Name: MusicSetting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2606,8 +2642,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 372534730}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1343718487
@@ -3377,6 +3412,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1830810833}
+        m_TargetAssemblyTypeName: Audio.AudioTrigger, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1830810831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3704,3 +3751,4 @@ SceneRoots:
   - {fileID: 1722922564}
   - {fileID: 1297118741}
   - {fileID: 1442486174}
+  - {fileID: 372534730}

@@ -321,6 +321,7 @@ public class TurnBaseSystem : MonoBehaviour
             }
         }
         // attacker juga mati setelah menyerang
+        attacker.UnitController.PlayAttackAnim();
         attacker.ChangeStatus(true);
         var cardAttacker = GetPlayerCard(attacker.UnitData);
         UIManagerBattle.RemoveCard(cardAttacker);
