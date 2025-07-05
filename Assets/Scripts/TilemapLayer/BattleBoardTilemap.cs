@@ -12,6 +12,11 @@ namespace TilemapLayer
         [SerializeField] private ColliderTilemap _colliderTilemap;
         private Dictionary<Vector3Int,UnitModel> _units = new();
 
+        private void Start()
+        {
+            SpawnItem();
+        }
+
         public void HideTileView()
         {
             if (_tilemap != null)
@@ -20,16 +25,19 @@ namespace TilemapLayer
             }
         }
 
-        public UnitModel Build(Vector3 worldCoords, GameObject prefab, UnitData unitData)
+        public UnitModel Build(Vector3 worldCoords, GameObject prefab, UnitData unitData, TileItemSpawn tileItemSpawn=null)
         {
             Vector3Int baseCoords = _tilemap.WorldToCell(worldCoords);
             if(!IsEmpty(baseCoords)) return null;
             _colliderTilemap.SetCollider(baseCoords);
             var position = _tilemap.CellToWorld(baseCoords) + new Vector3(1 / 2f, 1 / 2f);
             var player = Instantiate( prefab, position, Quaternion.identity);
-            var unit = new UnitModel(_tilemap, unitData, player ,baseCoords, position);
-            var unitController = player.GetComponent<UnitController>();
-            unitController.InitializeUnit(unit);
+            var unit = new UnitModel(_tilemap, unitData, player ,baseCoords, position, tileItemSpawn);
+            if (unit.UnitData)
+            {
+                var unitController = player.GetComponent<UnitController>();
+                unitController.InitializeUnit(unit);
+            }
             _units.Add(baseCoords, unit);
             return unit;
         }
@@ -46,6 +54,19 @@ namespace TilemapLayer
                 }
             }
             return dict;
+        }
+
+        public void SpawnItem()
+        {
+            foreach (var pos in _tilemap.cellBounds.allPositionsWithin)
+            {
+                var tile = _tilemap.GetTile(pos) as TileItemSpawn;
+                if (tile != null)
+                {
+                    var world = _tilemap.CellToWorld(pos) + new Vector3(.5f, .5f, 0);
+                    Build(world, tile.PrefabItem, null, tile);
+                }
+            }
         }
         public bool IsEmpty(Vector3 worldCoords)
         {
@@ -71,6 +92,7 @@ namespace TilemapLayer
             var list = new List<UnitModel>();
             foreach (var unit in _units)
             {
+                if(!unit.Value.UnitData) continue;
                 if (unit.Value.UnitData.UnitSide == side )
                 {
                     if (life && !unit.Value.IsDead)
