@@ -94,4 +94,10 @@ public class CardManager : PersistentSingleton<CardManager>
             Destroy(_recruitCard.gameObject);
         });
     }
+
+    public void ResetCard()
+    {
+        _playerCard.Clear();
+        _playerCard.AddRange(_starterCard);
+    }
 }

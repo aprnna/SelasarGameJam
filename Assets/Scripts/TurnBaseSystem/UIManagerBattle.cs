@@ -90,6 +90,7 @@ namespace Turnbase_System
         }
         public void ShowLosePanel()
         {
+            _cardManager.ResetCard();
             _losePanel.SetActive(true);
         }
         public void HideLosePanel()
