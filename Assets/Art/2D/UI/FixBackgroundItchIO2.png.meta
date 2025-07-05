@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      FixBackgroundItchIO2_0: 8618700303340387961
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -92,5 +92,10 @@ namespace Turnbase_System
         {
             _losePanel.SetActive(false);
         }
+
+        public void RemoveCard(CardSO cardSo)
+        {
+            _cardManager.RemoveCard(cardSo);
+        }
     }
 }

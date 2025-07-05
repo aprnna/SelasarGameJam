@@ -119,7 +119,8 @@ public class ChooseCard : MonoBehaviour
                     {
                         foreach (var item in _selectedCard)
                         {
-                           _turnBaseSystem.SetPlayer(item.UnitData);
+                           _turnBaseSystem.SetPlayer(item);
+                           
                         }
                         _turnBaseSystem.OnDoneSelectPlayer();
                         onComplete?.Invoke();

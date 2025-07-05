@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
@@ -10,7 +9,6 @@ using Turnbase_System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.Tilemaps;
 
 public enum BattleResult
 {
@@ -33,6 +31,7 @@ public class TurnBaseSystem : MonoBehaviour
     public UIManagerBattle UIManagerBattle => _uIManagerBattle;
     public UnitModel ActiveUnit => _activeUnit;
     private int _maxPlayer;
+    private Dictionary<UnitData,CardSO> _playerCards;
     private List<UnitData> _players;
     public FiniteStateMachine<BattleState> BattleState { get; private set; }
     public PlayerTurnState PlayerTurnState { get; private set; }
@@ -50,6 +49,7 @@ public class TurnBaseSystem : MonoBehaviour
     private void Awake()
     {
         _players = new List<UnitData>();
+        _playerCards = new Dictionary<UnitData, CardSO>();
         _mainCamera = Camera.main;
 
         if (Instance == null) Instance = this;
@@ -103,9 +103,16 @@ public class TurnBaseSystem : MonoBehaviour
         UIManagerBattle.ShowRecruitCards();
         UIManagerBattle.HideVictoryPanel();
     }
-    public void SetPlayer(UnitData unitData)
+    public void SetPlayer(CardSO cardSo)
     {
-        _players.Add(unitData);
+        _playerCards[cardSo.UnitData] = cardSo;
+        _players.Add(cardSo.UnitData);
+    }
+
+    public CardSO GetPlayerCard(UnitData unitData)
+    {
+        _playerCards.TryGetValue(unitData, out var dCardSo);
+        return dCardSo;
     }
     public void OnDoneSelectPlayer()
     {
@@ -114,6 +121,7 @@ public class TurnBaseSystem : MonoBehaviour
 
     private async UniTask CompleteSelectCard()
     {
+        Debug.Log("COMPLETE");
         InitializePlayer();
         await UIManagerBattle.ShowAnnouncement("BATTLE START");
         BattleState.ChangeState(PlayerTurnState);
@@ -126,10 +134,12 @@ public class TurnBaseSystem : MonoBehaviour
     }
     private void InitializePlayer()
     {
+        Debug.Log("INITIALIZE");
         var playerSpawns = _battleBoard.GetSpawnLoc(UnitSide.Player);   // Sorted by key
         int i = 0;
         foreach (var kv in playerSpawns)
         {
+            Debug.Log(kv.Value);
             _battleBoard.Build(kv.Value, _players[i++].UnitPrefab, _players[i - 1]);
         }
     }
@@ -295,9 +305,15 @@ public class TurnBaseSystem : MonoBehaviour
             Debug.Log(target.IsItem);
             if (target.UnitData)
             {
-                target.ChangeStatus(true);
+                target.ChangeStatus(true); 
+                
                 target.UnitController.PlayDeadAnim();
                 Debug.Log(target.UnitData.Name);
+                if (target.UnitData.UnitSide == UnitSide.Player)
+                {
+                    var card = GetPlayerCard(target.UnitData);
+                    UIManagerBattle.RemoveCard(card);
+                }
             }
             if (target.IsItem)
             {
@@ -306,6 +322,8 @@ public class TurnBaseSystem : MonoBehaviour
         }
         // attacker juga mati setelah menyerang
         attacker.ChangeStatus(true);
+        var cardAttacker = GetPlayerCard(attacker.UnitData);
+        UIManagerBattle.RemoveCard(cardAttacker);
         _battleBoard.RemoveUnit(attacker);
     }
 
@@ -326,6 +344,11 @@ public class TurnBaseSystem : MonoBehaviour
                 target.ChangeStatus(true);
                 target.UnitController.PlayDeadAnim();
                 Debug.Log(target.UnitData.Name);
+                if (target.UnitData.UnitSide == UnitSide.Player)
+                {
+                    var card = GetPlayerCard(target.UnitData);
+                    UIManagerBattle.RemoveCard(card);
+                }
             }
         }
         // attacker juga mati setelah menyerang
