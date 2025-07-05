@@ -1,4 +1,5 @@
 using System;
+using Audio;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -117,6 +118,7 @@ public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        AudioManager.Instance.PlaySound(SoundType.SFX_CardPick);
         if (_isClicked && !_isMoving )
         {
             if (_isChoose)

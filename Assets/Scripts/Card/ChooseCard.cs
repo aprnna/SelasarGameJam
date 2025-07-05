@@ -108,6 +108,7 @@ public class ChooseCard : MonoBehaviour
 
     public void FinishChooseCard(Action onComplete)
     {
+        if(_selectedCard.Count<1) return;
         _bottomPanel
             .DOAnchorPosX(1200, 0.3f)
             .OnComplete(() =>

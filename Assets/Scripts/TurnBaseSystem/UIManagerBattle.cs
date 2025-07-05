@@ -22,12 +22,15 @@ namespace Turnbase_System
 
         // public Canvas MainCanvas => _mainCanvas;
         private CardManager _cardManager;
+        private AudioManager _audioManager;
 
         public UnitPopUpController UnitController => _unitPopUpController;
 
         private void Start()
         {
             _cardManager = CardManager.Instance;
+
+            _audioManager = AudioManager.Instance;
         }
         
         public void ShowPlayerCards()
@@ -82,6 +85,7 @@ namespace Turnbase_System
 
         public void ShowVictoryPanel()
         {
+            _audioManager.PlaySound(SoundType.SFX_Victory);
             _victoryPanel.SetActive(true);
         }
         public void HideVictoryPanel()
@@ -90,6 +94,7 @@ namespace Turnbase_System
         }
         public void ShowLosePanel()
         {
+            _audioManager.PlaySound(SoundType.SFX_Lose);
             _cardManager.ResetCard();
             _losePanel.SetActive(true);
         }

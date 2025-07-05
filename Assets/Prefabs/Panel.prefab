@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8936223202019132319}
   - component: {fileID: 4764329445568807354}
   - component: {fileID: 453839302086041501}
+  - component: {fileID: 5587832675282296772}
   m_Layer: 5
   m_Name: ButtonTutorial
   m_TagString: Untagged
@@ -133,6 +134,31 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 5587832675282296772}
+        m_TargetAssemblyTypeName: Audio.AudioTrigger, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &5587832675282296772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3398362986582121933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3304bbdeff92749889e986b4a94f6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundType: 7
 --- !u!1 &4748759667927531225
 GameObject:
   m_ObjectHideFlags: 0
@@ -454,6 +480,7 @@ GameObject:
   - component: {fileID: 4460656185478861709}
   - component: {fileID: 3017974766201107778}
   - component: {fileID: 6780977687012667058}
+  - component: {fileID: 5108791152086176212}
   m_Layer: 5
   m_Name: ButtonPause
   m_TagString: Untagged
@@ -562,4 +589,29 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3017974766201107778}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5108791152086176212}
+        m_TargetAssemblyTypeName: Audio.AudioTrigger, Assembly-CSharp
+        m_MethodName: TriggerSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &5108791152086176212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7718338657357024303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d3304bbdeff92749889e986b4a94f6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundType: 0

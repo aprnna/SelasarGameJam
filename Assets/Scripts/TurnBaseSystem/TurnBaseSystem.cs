@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
+using Audio;
 using Cysharp.Threading.Tasks;
 using Input;
 using Manager;
@@ -46,6 +47,7 @@ public class TurnBaseSystem : MonoBehaviour
     private Camera _mainCamera;
     private Vector3 _pendingMove;
     private bool _confirmMove;
+    private AudioManager _audioManager;
     private void Awake()
     {
         _players = new List<UnitData>();
@@ -57,6 +59,7 @@ public class TurnBaseSystem : MonoBehaviour
     }
     private void Start()
     {
+        _audioManager = AudioManager.Instance;
         SelectCardState = new SelectCardState(this);
         PlayerTurnState = new PlayerTurnState(this);
         EnemyTurnState = new EnemyTurnState(this);
@@ -251,6 +254,7 @@ public class TurnBaseSystem : MonoBehaviour
             var unitController = _uIManagerBattle.UnitController;
             if (isPlayer && !unitController.AlreadyMove && !unitController.OnMoveUnit)
             {
+                _audioManager.PlaySound(SoundType.SFX_TileChoose);
                 _uIManagerBattle.ShowUnitAction(item, item.WorldCoords);
             }
         }
