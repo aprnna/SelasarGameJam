@@ -16,7 +16,8 @@ namespace Turnbase_System
         [SerializeField] private GameAnnouncement _gameAnnouncement;
         [SerializeField] private GameObject _victoryPanel;
         [SerializeField] private GameObject _losePanel;
-        [SerializeField] private AudioTrigger _audioTrigger; 
+        [SerializeField] private AudioTrigger _audioTrigger;
+        [SerializeField] private GameObject _pausePanel;
         // [SerializeField] private Canvas _mainCanvas;
 
         // public Canvas MainCanvas => _mainCanvas;
@@ -99,6 +100,18 @@ namespace Turnbase_System
         public void RemoveCard(CardSO cardSo)
         {
             _cardManager.RemoveCard(cardSo);
+        }
+
+        public void PauseGame()
+        {
+            _pausePanel.SetActive(true);
+            Time.timeScale = 0f;
+        }
+
+        public void ResumeGame()
+        {
+            _pausePanel.SetActive(false);
+            Time.timeScale = 1f;
         }
     }
 }
