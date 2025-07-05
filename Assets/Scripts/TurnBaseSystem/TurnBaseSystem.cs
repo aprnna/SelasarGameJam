@@ -137,10 +137,14 @@ public class TurnBaseSystem : MonoBehaviour
         Debug.Log("INITIALIZE");
         var playerSpawns = _battleBoard.GetSpawnLoc(UnitSide.Player);   // Sorted by key
         int i = 0;
+        int count = 0;
         foreach (var kv in playerSpawns)
         {
-            Debug.Log(kv.Value);
-            _battleBoard.Build(kv.Value, _players[i++].UnitPrefab, _players[i - 1]);
+            count++;
+            if (count <= _players.Count)
+            {
+                _battleBoard.Build(kv.Value, _players[i++].UnitPrefab, _players[i - 1]);
+            }
         }
     }
     private void InitializeEnemy()
