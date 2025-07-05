@@ -708,7 +708,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Choose Card
+  m_text: Choose 4 Card
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d08e15b8130245c41a9cbf8982264285, type: 2}
   m_sharedMaterial: {fileID: 3324082846872353813, guid: d08e15b8130245c41a9cbf8982264285, type: 2}

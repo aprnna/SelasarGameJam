@@ -719,7 +719,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Recruit Card
+  m_text: Recruit 3 Card
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d08e15b8130245c41a9cbf8982264285, type: 2}
   m_sharedMaterial: {fileID: 3324082846872353813, guid: d08e15b8130245c41a9cbf8982264285, type: 2}
@@ -784,7 +784,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -30.400238, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
