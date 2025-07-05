@@ -231,11 +231,14 @@ public class TurnBaseSystem : MonoBehaviour
         if (BattleState.CurrentState != PlayerTurnState) return;
         var worldPosition = _mainCamera.ScreenToWorldPoint(_mousePos);
         UnitModel item = _battleBoard.GetUnit(worldPosition);
-        var isPlayer = item?.UnitData.UnitSide == UnitSide.Player;
-        var unitController = _uIManagerBattle.UnitController;
-        if (isPlayer && !unitController.AlreadyMove && !unitController.OnMoveUnit)
+        if (item != null && item.UnitData)
         {
-            _uIManagerBattle.ShowUnitAction(item, item.WorldCoords);
+            var isPlayer = item?.UnitData.UnitSide == UnitSide.Player;
+            var unitController = _uIManagerBattle.UnitController;
+            if (isPlayer && !unitController.AlreadyMove && !unitController.OnMoveUnit)
+            {
+                _uIManagerBattle.ShowUnitAction(item, item.WorldCoords);
+            }
         }
         if (_activeUnit != null && !_confirmMove && IsValid(worldPosition))
         {
@@ -288,11 +291,17 @@ public class TurnBaseSystem : MonoBehaviour
             Vector3 world = _battleBoard.CellToWorld(cell) + new Vector3(0.5f, 0.5f);
             var target = _battleBoard.GetUnit(world);
             UIManagerBattle.StartVFXExplosive(world);
-            if (target != null)
+            if (target == null ) continue;
+            Debug.Log(target.IsItem);
+            if (target.UnitData)
             {
                 target.ChangeStatus(true);
                 target.UnitController.PlayDeadAnim();
                 Debug.Log(target.UnitData.Name);
+            }
+            if (target.IsItem)
+            {
+                TriggerItem(target);
             }
         }
         // attacker juga mati setelah menyerang
@@ -301,6 +310,29 @@ public class TurnBaseSystem : MonoBehaviour
         _battleBoard.RemoveUnit(attacker);
     }
 
+    public void TriggerItem(UnitModel itemModel)
+    {
+        var origin   = itemModel.Coordinates;
+        var data     = itemModel.ItemData;
+        var offsets  = UnitAttackCalculate.GetOffsets(
+            data.AttackPattern, data.AttacKRange, data.AttackDirection
+        );
+        foreach (var off in offsets) {
+            var cell = origin + off;
+            Vector3 world = _battleBoard.CellToWorld(cell) + new Vector3(0.5f, 0.5f);
+            var target = _battleBoard.GetUnit(world);
+            UIManagerBattle.StartVFXExplosive(world);
+            if (target != null && target.UnitData)
+            {
+                target.ChangeStatus(true);
+                target.UnitController.PlayDeadAnim();
+                Debug.Log(target.UnitData.Name);
+            }
+        }
+        // attacker juga mati setelah menyerang
+        itemModel.ChangeStatus(true);
+        _battleBoard.RemoveUnit(itemModel);
+    }
     public void OnAttackCanceled()
     {
         HidePlayerAttack();
