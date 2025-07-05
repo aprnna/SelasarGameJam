@@ -95,7 +95,8 @@ namespace TilemapLayer
                 if(!unit.Value.UnitData) continue;
                 if (unit.Value.UnitData.UnitSide == side )
                 {
-                    if (life && !unit.Value.IsDead)
+                    if(unit.Value.IsItem) continue;
+                    if (life && !unit.Value.IsDead )
                     {
                         list.Add(unit.Value);
                     }

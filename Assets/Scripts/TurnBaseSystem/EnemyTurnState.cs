@@ -298,8 +298,12 @@ namespace Turnbase_System
             {
                 tbs.SetBattleResult(BattleResult.EnemyWin);
                 tbs.BattleState.ChangeState(tbs.GameEndState);
+            }else if (tbs.GetAliveUnitsBySide(UnitSide.Enemy).Count == 0)
+            {
+                tbs.SetBattleResult(BattleResult.PlayerWin);
+                tbs.BattleState.ChangeState(tbs.GameEndState);
             }
-            if (tbs.GetAliveUnitsBySide(UnitSide.Player).Count > 0)
+            else if (tbs.GetAliveUnitsBySide(UnitSide.Player).Count > 0)
             {
                 tbs.BattleState.ChangeState(tbs.PlayerTurnState);
             }
