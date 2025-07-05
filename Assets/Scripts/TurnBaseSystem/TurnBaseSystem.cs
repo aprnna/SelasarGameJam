@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Input;
+using Manager;
 using Player;
 using TilemapLayer;
 using Turnbase_System;
@@ -21,18 +22,18 @@ public class TurnBaseSystem : MonoBehaviour
 {
     public static TurnBaseSystem Instance;
     [SerializeField] private UIManagerBattle _uIManagerBattle;
-    
+
     [Header("TilemapLayer")]
     [SerializeField] private BattleAreaTilemap _battleArea;
     [SerializeField] private BattleBoardTilemap _battleBoard;
     [SerializeField] private PreviewTilemap _previewTilemap;
 
-    [Header("Enemy")] 
+    [Header("Enemy")]
     [SerializeField] private List<UnitData> _enemies;
     public UIManagerBattle UIManagerBattle => _uIManagerBattle;
     public UnitModel ActiveUnit => _activeUnit;
     private int _maxPlayer;
-    private List<UnitData>  _players;
+    private List<UnitData> _players;
     public FiniteStateMachine<BattleState> BattleState { get; private set; }
     public PlayerTurnState PlayerTurnState { get; private set; }
     public SelectCardState SelectCardState { get; private set; }
@@ -48,7 +49,7 @@ public class TurnBaseSystem : MonoBehaviour
     private bool _confirmMove;
     private void Awake()
     {
-        _players        = new List<UnitData>();
+        _players = new List<UnitData>();
         _mainCamera = Camera.main;
 
         if (Instance == null) Instance = this;
@@ -73,7 +74,7 @@ public class TurnBaseSystem : MonoBehaviour
     private void Initialize()
     {
         Scene scene = SceneManager.GetActiveScene();
-        if(scene.name == "Stage1") UIManagerBattle.ShowTutorial();
+        if (scene.name == "Stage1") UIManagerBattle.ShowTutorial();
         else
         {
             BattleState = new FiniteStateMachine<BattleState>(SelectCardState);
@@ -110,7 +111,7 @@ public class TurnBaseSystem : MonoBehaviour
     {
         CompleteSelectCard().Forget();
     }
-    
+
     private async UniTask CompleteSelectCard()
     {
         InitializePlayer();
@@ -121,7 +122,7 @@ public class TurnBaseSystem : MonoBehaviour
     private void InitializePlayerLoc()
     {
         var playerSpawns = _battleBoard.GetSpawnLoc(UnitSide.Player);   // Sorted by key
-        _maxPlayer = playerSpawns.Count+1;
+        _maxPlayer = playerSpawns.Count + 1;
     }
     private void InitializePlayer()
     {
@@ -129,7 +130,7 @@ public class TurnBaseSystem : MonoBehaviour
         int i = 0;
         foreach (var kv in playerSpawns)
         {
-            _battleBoard.Build(kv.Value, _players[i++].UnitPrefab, _players[i-1]);
+            _battleBoard.Build(kv.Value, _players[i++].UnitPrefab, _players[i - 1]);
         }
     }
     private void InitializeEnemy()
@@ -138,7 +139,7 @@ public class TurnBaseSystem : MonoBehaviour
         int i = 0;
         foreach (var kv in enemySpawns)
         {
-            _battleBoard.Build(kv.Value, _enemies[i++].UnitPrefab, _enemies[i-1]);
+            _battleBoard.Build(kv.Value, _enemies[i++].UnitPrefab, _enemies[i - 1]);
         }
     }
     public void ShowPlayerMove(UnitModel unitModel)
@@ -160,17 +161,17 @@ public class TurnBaseSystem : MonoBehaviour
     {
         _battleArea.HideAttackTile();
     }
-    public  void ShowPreview(Vector3 position)
+    public void ShowPreview(Vector3 position)
         => _previewTilemap.ShowPreview(
             _activeUnit,
             position,
             IsValid(position)
         );
-    public void ClearPreview() 
+    public void ClearPreview()
         => _previewTilemap.ClearPreview();
-    
+
     public bool IsValid(Vector3 worldPosition)
-        => _battleBoard.IsEmpty(worldPosition) && _battleArea.IsValidMoveCell(worldPosition) ;
+        => _battleBoard.IsEmpty(worldPosition) && _battleArea.IsValidMoveCell(worldPosition);
     public void StartPreview()
     {
         _cts = new CancellationTokenSource();
@@ -214,7 +215,8 @@ public class TurnBaseSystem : MonoBehaviour
     }
     public bool IsPointerOverUI(Vector2 screenPosition)
     {
-        var eventData = new PointerEventData(EventSystem.current) {
+        var eventData = new PointerEventData(EventSystem.current)
+        {
             position = screenPosition
         };
         var results = new List<RaycastResult>();
@@ -223,7 +225,7 @@ public class TurnBaseSystem : MonoBehaviour
     }
     private void OnLeftMouseClicked()
     {
-   
+
         _mousePos = InputManager.Instance.PlayerInput.MousePos.Get();
         if (IsPointerOverUI(_mousePos)) return;
         if (BattleState.CurrentState != PlayerTurnState) return;
@@ -235,7 +237,7 @@ public class TurnBaseSystem : MonoBehaviour
         {
             _uIManagerBattle.ShowUnitAction(item, item.WorldCoords);
         }
-        if(_activeUnit != null && !_confirmMove && IsValid(worldPosition))
+        if (_activeUnit != null && !_confirmMove && IsValid(worldPosition))
         {
             _pendingMove = worldPosition;
             FreezePreview();
@@ -262,7 +264,8 @@ public class TurnBaseSystem : MonoBehaviour
         StopPreview();
         _confirmMove = false;
     }
-    public void OnAttackButton() {
+    public void OnAttackButton()
+    {
         if (ActiveUnit == null) return;
         PerformAttack();
         HidePlayerAttack();
@@ -270,20 +273,22 @@ public class TurnBaseSystem : MonoBehaviour
         SetActiveUnit(null);
         CheckEnemies();
     }
-    public void PerformAttack() {
+    public void PerformAttack()
+    {
         var attacker = ActiveUnit;
-        var origin   = attacker.Coordinates;
-        var data     = attacker.UnitData;
-        var offsets  = UnitAttackCalculate.GetOffsets(
+        var origin = attacker.Coordinates;
+        var data = attacker.UnitData;
+        var offsets = UnitAttackCalculate.GetOffsets(
             data.AttackPattern, data.Range, data.Direction
         );
 
-        foreach (var off in offsets) {
+        foreach (var off in offsets)
+        {
             var cell = origin + off;
             Vector3 world = _battleBoard.CellToWorld(cell) + new Vector3(0.5f, 0.5f);
             var target = _battleBoard.GetUnit(world);
             UIManagerBattle.StartVFXExplosive(world);
-            if (target != null )
+            if (target != null)
             {
                 target.ChangeStatus(true);
                 target.UnitController.PlayDeadAnim();
@@ -308,14 +313,14 @@ public class TurnBaseSystem : MonoBehaviour
     }
     public List<UnitModel> GetAliveUnitsBySide(UnitSide side)
     {
-         return _battleBoard.GetUnits(side, true);
+        return _battleBoard.GetUnits(side, true);
     }
 
     public void MoveEnemy(UnitModel enemy, Vector3 worldPosition)
     {
-         var newUnit = _battleBoard.Build(worldPosition, enemy.UnitData.UnitPrefab, enemy.UnitData);
-         _battleBoard.RemoveUnit(enemy);
-         _activeUnit = newUnit;
+        var newUnit = _battleBoard.Build(worldPosition, enemy.UnitData.UnitPrefab, enemy.UnitData);
+        _battleBoard.RemoveUnit(enemy);
+        _activeUnit = newUnit;
     }
 
     public void CheckEnemies()
@@ -334,7 +339,7 @@ public class TurnBaseSystem : MonoBehaviour
             BattleState.ChangeState(GameEndState);
             return;
         }
-        if(enemies.Count > 0)  BattleState.ChangeState(EnemyTurnState);
+        if (enemies.Count > 0) BattleState.ChangeState(EnemyTurnState);
         else
         {
             SetBattleResult(BattleResult.PlayerWin);
@@ -343,7 +348,7 @@ public class TurnBaseSystem : MonoBehaviour
     }
     public bool IsInAttackRange(UnitModel attacker, UnitModel target)
     {
-        var data    = attacker.UnitData;
+        var data = attacker.UnitData;
         var offsets = UnitAttackCalculate.GetOffsets(
             data.AttackPattern, data.Range, data.Direction
         );
@@ -373,4 +378,8 @@ public class TurnBaseSystem : MonoBehaviour
     public Vector3Int WorldToCell(Vector3 world)
         => _battleBoard.WorldToCell(world);
 
+    public void GoToMainMenu()
+    {
+        SceneController.Instance.ChangeScene("MainMenu");
+    }
 }

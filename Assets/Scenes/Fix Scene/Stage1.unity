@@ -6307,10 +6307,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 183681956}
-        m_TargetAssemblyTypeName: Manager.SceneController, Assembly-CSharp
-        m_MethodName: ChangeScene
-        m_Mode: 5
+      - m_Target: {fileID: 1325011100}
+        m_TargetAssemblyTypeName: TurnBaseSystem, Assembly-CSharp
+        m_MethodName: GoToMainMenu
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6392,11 +6392,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 25d3b1364387d514e8b1d7cf64d0c86f, type: 2}
   - {fileID: 11400000, guid: 25d3b1364387d514e8b1d7cf64d0c86f, type: 2}
   - {fileID: 11400000, guid: 25d3b1364387d514e8b1d7cf64d0c86f, type: 2}
-  _maxCard: 4
+  _maxCard: 8
   _cardPrefab: {fileID: 5969575849203548813, guid: 79199dae3925c4b4a801677605a84e58, type: 3}
   _chooseCardPrefab: {fileID: 4326420024811659693, guid: a31ad1ebefea1014e8b3caa7d41ac35f, type: 3}
   _recruitCardPrefab: {fileID: 1984019434364245670, guid: aa2cb570b1d63d242a9949c0ffc1a80c, type: 3}
-  canvas: {fileID: 1974217772}
 --- !u!4 &1480844194
 Transform:
   m_ObjectHideFlags: 0
